@@ -27,7 +27,7 @@ import java.util.List;
 public class AProductController {
     private final ProductService productService;
     private static final String UPLOAD_DIR = "src/main/resources/images";
-    @PostMapping("/create")
+    @PostMapping("/createNewProduct")
     public ResponseEntity<?>createProduct(@Valid  ProductDto dto, BindingResult result,@RequestParam("file")MultipartFile file) throws IOException {
         if(result.hasErrors()){
             return ResponseEntity.badRequest().body("Invalid request");
@@ -58,7 +58,7 @@ public class AProductController {
         ProductDto productDto= productService.getProductById(productId);
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
-    @PostMapping("/{productId}")
+    @PostMapping("/updateProduct/{productId}")
     public ResponseEntity<ProductDto>updateProduct(@RequestBody ProductDto dto,@PathVariable Long productId) throws IOException {
         ProductDto productDto=productService.updateProduct(productId,dto);
         return new ResponseEntity<>(productDto,HttpStatus.OK);

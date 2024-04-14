@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VariationController {
     private final VariationService variationService;
-    @PostMapping("/create")
+    @PostMapping("/createNewVariation")
     public ResponseEntity<?> createVariation(@Valid @RequestBody VariationDto variationDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body("Invalid request");

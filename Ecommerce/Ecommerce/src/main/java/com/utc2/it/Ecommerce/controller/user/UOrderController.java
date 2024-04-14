@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/user/order")
 public class UOrderController {
     private final OrderService orderService;
-    @PostMapping("/add")
+    @PostMapping("/createNewOrder")
     public ResponseEntity<OrderRequest>addOrder(@RequestBody OrderRequest request){
         OrderRequest result=orderService.userOrder(request);
         return  new ResponseEntity<>(result, HttpStatus.CREATED);
