@@ -1,4 +1,4 @@
-package com.utc2.it.Ecommerce.controller.user;
+package com.utc2.it.Ecommerce.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -15,8 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api/user/images")
-public class ImageController {
+@RequestMapping("/api/admin/images")
+public class AImageController {
 
     @Value("${images.directory}")
     private String imagesDirectory;
@@ -31,4 +31,3 @@ public class ImageController {
                 .body(imageResource);
     }
 }
-

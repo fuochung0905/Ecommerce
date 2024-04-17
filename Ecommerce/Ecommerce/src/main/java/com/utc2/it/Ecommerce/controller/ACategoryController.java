@@ -1,4 +1,4 @@
-package com.utc2.it.Ecommerce.controller.admin;
+package com.utc2.it.Ecommerce.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/category")
 @RequiredArgsConstructor
-public class CategoryController {
+public class ACategoryController {
     private final CategoryService categoryService;
     @PostMapping("/createNewCategory")
     public ResponseEntity<?>createCategory(@Valid @RequestBody CategoryDto dto, BindingResult bindingResult){

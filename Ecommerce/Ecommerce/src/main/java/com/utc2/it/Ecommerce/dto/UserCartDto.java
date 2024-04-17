@@ -14,5 +14,5 @@ public class UserCartDto {
     private String color;
     private String size;
     private String productName;
-    private byte[] image;
+    private String image;
 }

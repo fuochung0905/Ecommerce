@@ -1,5 +1,7 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.entity.*;
+import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.CartService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -11,14 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.utc2.it.Ecommerce.dto.CartDto;
 import com.utc2.it.Ecommerce.dto.UserCartDto;
-import com.utc2.it.Ecommerce.entity.CartDetail;
-import com.utc2.it.Ecommerce.entity.Product;
-import com.utc2.it.Ecommerce.entity.ShoppingCart;
-import com.utc2.it.Ecommerce.entity.User;
-import com.utc2.it.Ecommerce.repository.CartDetailRepository;
-import com.utc2.it.Ecommerce.repository.ProductRepository;
-import com.utc2.it.Ecommerce.repository.ShoppingCartRepository;
-import com.utc2.it.Ecommerce.repository.UserRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +25,7 @@ public class CartServiceImpl implements CartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ProductRepository productRepository;
     private final CartDetailRepository cartDetailRepository;
+    private final ProductItemRepository productItemRepository;
     @PersistenceContext
     private EntityManager entityManager;
     private User getUser(String username){
@@ -61,16 +56,16 @@ public class CartServiceImpl implements CartService {
             shoppingCartRepository.save(newShoppingCart);
         }
         else {
-            Product product = productRepository.findById(productId).orElseThrow();
+            ProductItem product = productItemRepository.findById(productId).orElseThrow();
             CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, product);
 
             if(cartDetail==null) {
                 CartDetail newCart= new CartDetail();
                 newCart.setQuantity(1);
-                newCart.setProduct(product);
+                newCart.setProductItem(product);
                 newCart.setSize(cartDto.getSize());
                 newCart.setColor(cartDto.getColo());
-                double totalPrice = product.getExportPrice() * 1;
+                double totalPrice = product.getPrice() * 1;
                 newCart.setPrice(totalPrice);
                 newCart.setShopping_cart(checkShoppingCart);
                 cartDetailRepository.save(newCart);
@@ -82,9 +77,7 @@ public class CartServiceImpl implements CartService {
                 cartDetailRepository.save(cartDetail);
                 Integer carCount= cartDetailRepository.GetCartItemCount(user);
                 return carCount;
-
             }
-
         }
 
         return 0;
@@ -100,8 +93,9 @@ public class CartServiceImpl implements CartService {
         if (checkShoppingCart == null) {
             return 0;
         }
-        Product product = productRepository.findById(productId).orElseThrow();
-        CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, product);
+
+        ProductItem productItem=productItemRepository.findById(productId).orElseThrow();
+        CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
         if(cartDetail == null){
             return 0;
         }
@@ -130,12 +124,14 @@ public class CartServiceImpl implements CartService {
             for (CartDetail cart: shoppingCart.getCartDetails()) {
                 UserCartDto userCartDto= new UserCartDto();
                 userCartDto.setId(cart.getId());
-                userCartDto.setProductName(cart.getProduct().getProductName());
+                ProductItem productItem=productItemRepository.findById(cart.getProductItem().getId()).orElseThrow();
+                Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                userCartDto.setProductName(product.getProductName());
                 userCartDto.setSize(cart.getSize());
                 userCartDto.setColor(cart.getColor());
                 userCartDto.setQuantity(cart.getQuantity());
                 userCartDto.setPrice(cart.getPrice());
-//                userCartDto.setImage(cart.getProduct().getImage());
+                userCartDto.setImage(productItem.getProductItemImage());
                 userCartDtoS.add(userCartDto);
             }
             return userCartDtoS;
@@ -157,8 +153,7 @@ public class CartServiceImpl implements CartService {
         ShoppingCart shoppingCart = entityManager.createQuery(
                         "SELECT sc FROM ShoppingCart sc " +
                                 "JOIN FETCH sc.cartDetails cd " +
-                                "JOIN FETCH cd.product p " +
-                                "JOIN FETCH p.category " +
+                                "JOIN FETCH cd.productItem p " +
                                 "WHERE sc.user.email = :userName", ShoppingCart.class)
                 .setParameter("userName", userName)
                 .setMaxResults(1)

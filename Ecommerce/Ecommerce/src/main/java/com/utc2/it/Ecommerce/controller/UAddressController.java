@@ -1,4 +1,4 @@
-package com.utc2.it.Ecommerce.controller.user;
+package com.utc2.it.Ecommerce.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/address")
 @RequiredArgsConstructor
-public class AddressController {
+public class UAddressController {
     private final AddressService addressService;
     @PostMapping("/createNewAddress")
     public ResponseEntity<AddressDto>createAddress(@RequestBody AddressDto addressDto){

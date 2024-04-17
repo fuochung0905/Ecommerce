@@ -4,8 +4,8 @@ package com.utc2.it.Ecommerce.service;
 
 import org.springframework.data.repository.query.Param;
 import com.utc2.it.Ecommerce.dto.ProductDto;
-import com.utc2.it.Ecommerce.dto.ProductVariationDto;
-import com.utc2.it.Ecommerce.dto.VariationDto;
+import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
+import com.utc2.it.Ecommerce.dto.VariationOptionDto;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,8 +16,8 @@ public interface ProductService {
     ProductDto getProductById(Long productId);
     void deleteProductById(Long productId);
     List<ProductDto>getAllProduct();
-    ProductDto addVariationForProduct(ProductVariationDto productVariationDto);
-    ProductDto removeVariationForProduct(ProductVariationDto productVariationDto);
-    List<VariationDto>getAllVariationProduct(@Param("productId")Long productId);
+    ProductDto addVariationForProduct(ProductItemVariationDto productVariationDto);
+    ProductDto removeVariationForProduct(ProductItemVariationDto productVariationDto);
+    List<VariationOptionDto>getAllVariationProduct(@Param("productId")Long productId);
     void saveProductImage(Long productId, String imageName);
 }

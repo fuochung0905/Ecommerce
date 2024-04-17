@@ -14,5 +14,9 @@ public class SimpleCrosFilter implements WebMvcConfigurer {
                 .allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
                 .allowCredentials(true)
                 .maxAge(3600);
+        registry.addMapping("/v3/api-docs/**")
+                .allowedOrigins("http://localhost:8080")
+                .allowedMethods("GET");
     }
+
 }

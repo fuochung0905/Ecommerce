@@ -26,25 +26,12 @@ public class Product {
     private String productName;
     @NotNull
     private  String description;
-    private double importPrice;
-    private double exportPrice;
-    private int quantity;
-    private int qyt_stock;
-    private  int sold;
     @Column(name = "image_name")
     private String imageName;
-    //    @Lob
-//    @Column(columnDefinition = "longblob")
-//    private byte[] image;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
-    private List<CartDetail>cartDetails= new ArrayList<>();
-    @ManyToMany()
-    @JoinTable(name = "product_variation",
-    joinColumns = @JoinColumn(name = "product_id"),
-    inverseJoinColumns = @JoinColumn(name = "variation_id"))
-    private Set<Variation> variations= new HashSet<>();
-//    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
-//    private List<ShoppingCartItem>shoppingCartItems=new ArrayList<>() ;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductItem>productItems= new ArrayList<>();
+
+
 }

@@ -3,15 +3,20 @@ package com.utc2.it.Ecommerce;
 import com.utc2.it.Ecommerce.entity.Role;
 import com.utc2.it.Ecommerce.entity.User;
 import com.utc2.it.Ecommerce.repository.UserRepository;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
+
 @RequiredArgsConstructor
 @SpringBootApplication
-public class EcommerceApplication {
+@OpenAPIDefinition(info = @Info(title = "Employees API", version = "2.0", description = "Employees Information"))
+public class EcommerceApplication implements CommandLineRunner {
 	private final UserRepository userRepository;
 	public static void main(String[] args) {
 		SpringApplication.run(EcommerceApplication.class, args);
@@ -29,5 +34,6 @@ public class EcommerceApplication {
 			userRepository.save(admin);
 		}
 	}
+
 
 }

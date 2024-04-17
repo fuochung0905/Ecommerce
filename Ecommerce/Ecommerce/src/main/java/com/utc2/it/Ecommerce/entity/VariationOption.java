@@ -5,24 +5,25 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "cart_detail")
-public class CartDetail {
+@Table(name = "variation_option")
+public class VariationOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_detail_id")
     private Long Id;
-    private int quantity;
-    private double price;
-    private String color;
-    private String size;
+    private String name;
+    private String value;
     @ManyToOne(fetch = FetchType.LAZY)
-    private ProductItem productItem;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ShoppingCart shopping_cart;
+    @JoinColumn(name = "fk_variation_id")
+    private Variation variation;
+    @ManyToMany()
+    private Set<ProductItem> productItems= new HashSet<>();
+
 }

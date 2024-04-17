@@ -12,6 +12,6 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart,Long>
     @Query("select sc from ShoppingCart sc where sc.user=:user")
     ShoppingCart findShoppingCartByUser(@Param("user") User user);
 
-    @Query("select sc from ShoppingCart sc JOIN FETCH sc.cartDetails cd join FETCH cd.product where sc.user=:user")
+    @Query("select sc from ShoppingCart sc JOIN FETCH sc.cartDetails cd join FETCH cd.productItem where sc.user=:user")
     ShoppingCart findShoppingCartByUserWithProduct(@Param("user")User user);
 }

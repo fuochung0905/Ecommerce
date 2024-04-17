@@ -1,4 +1,4 @@
-package com.utc2.it.Ecommerce.controller.admin;
+package com.utc2.it.Ecommerce.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.utc2.it.Ecommerce.dto.DeleteResponse;
 import com.utc2.it.Ecommerce.dto.ProductDto;
-import com.utc2.it.Ecommerce.dto.ProductVariationDto;
+import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
 import com.utc2.it.Ecommerce.service.ProductService;
 
 import java.io.IOException;
@@ -74,12 +74,12 @@ public class AProductController {
         return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }
     @PutMapping("/addVariation")
-    public ResponseEntity<ProductDto>addVariationToProduct(@RequestBody ProductVariationDto productVariationDto){
+    public ResponseEntity<ProductDto>addVariationToProduct(@RequestBody ProductItemVariationDto productVariationDto){
         ProductDto dto=productService.addVariationForProduct(productVariationDto);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
     @PutMapping("/removeVariation")
-    public ResponseEntity<ProductDto>removeVariationToProduct(@RequestBody ProductVariationDto productVariationDto){
+    public ResponseEntity<ProductDto>removeVariationToProduct(@RequestBody ProductItemVariationDto productVariationDto){
         ProductDto dto=productService.removeVariationForProduct(productVariationDto);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }

@@ -18,18 +18,23 @@ import com.utc2.it.Ecommerce.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
-    private final ShoppingCartRepository shoppingCartRepository;
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
     private final CartDetailRepository cartDetailRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final ProductItemRepository productItemRepository;
+    private final ExecutorService executorService=new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
 
     @Override
     public OrderRequest userOrder(OrderRequest request) {
@@ -39,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
         Address address= addressRepository.getAddressByIsDefine(user,true);
         if(address !=null){
             CartDetail cartDetail=cartDetailRepository.findById(request.getCartid()).orElseThrow();
-            Product product =cartDetail.getProduct();
+            ProductItem product =cartDetail.getProductItem();
             Order order= new Order();
             order.setUser(user);
             order.setOrderStatus(OrderStatus.ordered);
@@ -51,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
             OrderDetail orderDetail= new OrderDetail();
             orderDetail.setOrder(order);
             orderDetail.setAddressUser(address.getStreet()+" "+address.getState()+" "+address.getCity()+" "+address.getCountry());
-            orderDetail.setProduct(product);
+            orderDetail.setProductItem(product);
             orderDetail.setPrice(cartDetail.getPrice());
             orderDetail.setColor(cartDetail.getColor());
             orderDetail.setSize(cartDetail.getSize());
@@ -62,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
                 Order tampOrder=orderRepository.findById(saveOrderDetail.getId()).orElseThrow();
                 tampOrder.setTotalPrice(saveOrderDetail.getPrice()* saveOrderDetail.getQuantity());
                 product.setQyt_stock(product.getQyt_stock()-cartDetail.getQuantity());
-                Product saveProduct=productRepository.save(product);
+                ProductItem saveProduct=productItemRepository.save(product);
                 cartDetailRepository.delete(cartDetail);
 
                 orderRequest.setMessage("Order Successfully");
@@ -87,12 +92,15 @@ public class OrderServiceImpl implements OrderService {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
                     UserCartDto userCartDto= new UserCartDto();
-                    userCartDto.setProductName(orderDetail.getProduct().getProductName());
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    userCartDto.setProductName(product.getProductName());
                     userCartDto.setSize(orderDetail.getSize());
-//                    userCartDto.setImage(orderDetail.getProduct().getImage());
+//
                     userCartDto.setColor(orderDetail.getColor());
                     userCartDto.setPrice(orderDetail.getPrice());
                     userCartDto.setQuantity(orderDetail.getQuantity());
+                    userCartDto.setImage(productItem.getProductItemImage());
                     userCartDtos.add(userCartDto);
                 }
                 else {
@@ -113,12 +121,14 @@ public class OrderServiceImpl implements OrderService {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
                     UserCartDto userCartDto= new UserCartDto();
-                    userCartDto.setProductName(orderDetail.getProduct().getProductName());
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    userCartDto.setProductName(product.getProductName());
                     userCartDto.setSize(orderDetail.getSize());
-//                    userCartDto.setImage(orderDetail.getProduct().getImage());
                     userCartDto.setColor(orderDetail.getColor());
                     userCartDto.setPrice(orderDetail.getPrice());
                     userCartDto.setQuantity(orderDetail.getQuantity());
+                    userCartDto.setImage(productItem.getProductItemImage());
                     userCartDtos.add(userCartDto);
                 }
                 else {
@@ -139,12 +149,14 @@ public class OrderServiceImpl implements OrderService {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
                     UserCartDto userCartDto= new UserCartDto();
-                    userCartDto.setProductName(orderDetail.getProduct().getProductName());
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    userCartDto.setProductName(product.getProductName());
                     userCartDto.setSize(orderDetail.getSize());
-//                    userCartDto.setImage(orderDetail.getProduct().getImage());
                     userCartDto.setColor(orderDetail.getColor());
                     userCartDto.setPrice(orderDetail.getPrice());
                     userCartDto.setQuantity(orderDetail.getQuantity());
+                    userCartDto.setImage(productItem.getProductItemImage());
                     userCartDtos.add(userCartDto);
                 }
                 else {
@@ -165,12 +177,14 @@ public class OrderServiceImpl implements OrderService {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
                     UserCartDto userCartDto= new UserCartDto();
-                    userCartDto.setProductName(orderDetail.getProduct().getProductName());
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    userCartDto.setProductName(product.getProductName());
                     userCartDto.setSize(orderDetail.getSize());
-//                    userCartDto.setImage(orderDetail.getProduct().getImage());
                     userCartDto.setColor(orderDetail.getColor());
                     userCartDto.setPrice(orderDetail.getPrice());
                     userCartDto.setQuantity(orderDetail.getQuantity());
+                    userCartDto.setImage(productItem.getProductItemImage());
                     userCartDtos.add(userCartDto);
                 }
                 else {
@@ -191,12 +205,14 @@ public class OrderServiceImpl implements OrderService {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
                     UserCartDto userCartDto= new UserCartDto();
-                    userCartDto.setProductName(orderDetail.getProduct().getProductName());
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    userCartDto.setProductName(product.getProductName());
                     userCartDto.setSize(orderDetail.getSize());
-//                    userCartDto.setImage(orderDetail.getProduct().getImage());
                     userCartDto.setColor(orderDetail.getColor());
                     userCartDto.setPrice(orderDetail.getPrice());
                     userCartDto.setQuantity(orderDetail.getQuantity());
+                    userCartDto.setImage(productItem.getProductItemImage());
                     userCartDtos.add(userCartDto);
                 }
                 else {

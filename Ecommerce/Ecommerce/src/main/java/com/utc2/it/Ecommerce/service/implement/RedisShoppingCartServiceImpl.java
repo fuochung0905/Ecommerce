@@ -3,6 +3,7 @@ package com.utc2.it.Ecommerce.service.implement;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utc2.it.Ecommerce.entity.*;
+import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.RedisShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.utc2.it.Ecommerce.dto.CartDto;
 import com.utc2.it.Ecommerce.exception.NotFoundException;
-import com.utc2.it.Ecommerce.repository.CartDetailRepository;
-import com.utc2.it.Ecommerce.repository.ProductRepository;
-import com.utc2.it.Ecommerce.repository.ShoppingCartRepository;
-import com.utc2.it.Ecommerce.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +29,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ShoppingCartRepository shoppingCartRepository;
+    private final ProductItemRepository productItemRepository;
     private static final String SHOPPING_CART_KEY_PREFIX = "shopping_cart:";
     private final CartDetailRepository cartDetailRepository;
     private ShoppingCart getCart(User user){
@@ -60,15 +58,16 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
             shoppingCartRepository.save(newShoppingCart);
         }
         else {
-            Product product = productRepository.findById(productId).orElseThrow();
-            CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, product);
+
+            ProductItem productItem=productItemRepository.findById(productId).orElseThrow();
+            CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
             if(cartDetail==null) {
                 CartDetail newCart= new CartDetail();
                 newCart.setQuantity(1);
-                newCart.setProduct(product);
+                newCart.setProductItem(productItem);
                 newCart.setSize(cartDto.getSize());
                 newCart.setColor(cartDto.getColo());
-                double totalPrice = product.getExportPrice() * 1;
+                double totalPrice = productItem.getPrice() * 1;
                 newCart.setPrice(totalPrice);
                 newCart.setShopping_cart(checkShoppingCart);
                 CartDetail save= cartDetailRepository.save(newCart);
@@ -91,14 +90,16 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     // Tạo mới đối tượng ShoppingCartItem
                     ShoppingCartItem cartItem = new ShoppingCartItem();
                     cartItem.setId(save.getId());
-                    cartItem.setProductName(save.getProduct().getProductName());
+                    ProductItem tamp=productItemRepository.findById(save.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(tamp.getProduct().getId()).orElseThrow();
+                    cartItem.setProductName(product.getProductName());
                     cartItem.setPrice(save.getPrice());
                     cartItem.setUserId(user.getId());
                     cartItem.setQuantity(1);
                     cartItem.setProductId(productId);
                     cartItem.setSize(cartDto.getSize());
                     cartItem.setColor(cartDto.getColo());
-                    cartItem.setProductImageName(save.getProduct().getImageName());
+                    cartItem.setProductImageName(productItem.getProductItemImage());
                     try {
                         // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
                         String cartItemJSON = objectMapper.writeValueAsString(cartItem);
@@ -130,14 +131,16 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     // Tạo mới đối tượng ShoppingCartItem
                     ShoppingCartItem cartItem = new ShoppingCartItem();
                     cartItem.setId(save.getId());
-                    cartItem.setProductName(save.getProduct().getProductName());
+                    ProductItem tamp=productItemRepository.findById(save.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(tamp.getProduct().getId()).orElseThrow();
+                    cartItem.setProductName(product.getProductName());
                     cartItem.setPrice(save.getPrice());
                     cartItem.setUserId(user.getId());
                     cartItem.setQuantity(1);
                     cartItem.setProductId(productId);
                     cartItem.setSize(cartDto.getSize());
                     cartItem.setColor(cartDto.getColo());
-                    cartItem.setProductImageName(save.getProduct().getImageName());
+                    cartItem.setProductImageName(productItem.getProductItemImage());
                     try {
                         // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
                         String cartItemJSON = objectMapper.writeValueAsString(cartItem);

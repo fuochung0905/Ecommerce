@@ -6,25 +6,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+@Table(name = "variation")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "variation")
 public class Variation {
-    @Id
+    @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "variation_id")
     private Long Id;
     private String name;
-    private String value;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-    @ManyToMany()
-    private Set<Product> products= new HashSet<>();
+    @OneToMany(mappedBy = "variation",cascade = CascadeType.ALL)
+    private List<VariationOption>variationOptions= new ArrayList<>();
 
 }
