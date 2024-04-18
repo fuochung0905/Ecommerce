@@ -41,7 +41,7 @@ public class AVariationController {
         return new ResponseEntity<>(variationDtos,HttpStatus.OK);
     }
    @GetMapping("/product/{productId}")
-    public ResponseEntity<?>getAllVariation(@PathVariable Long productId){
+    public ResponseEntity<?>getAllVariationByProduct(@PathVariable Long productId){
         List<VariationDto>variationDtos=variationService.getVariationByProduct(productId);
         return new ResponseEntity<>(variationDtos,HttpStatus.OK);
    }

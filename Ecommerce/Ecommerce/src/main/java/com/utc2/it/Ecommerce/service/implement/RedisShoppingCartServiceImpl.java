@@ -38,8 +38,8 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     }
     @Override
     public void addToCart(Long  productId, CartDto cartDto) {
-        if (cartDto.getColo() == null) {
-            cartDto.setColo("");
+        if (cartDto.getColor() == null) {
+            cartDto.setColor("");
         }
         if (cartDto.getSize() == null) {
             cartDto.setSize("");
@@ -66,7 +66,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                 newCart.setQuantity(1);
                 newCart.setProductItem(productItem);
                 newCart.setSize(cartDto.getSize());
-                newCart.setColor(cartDto.getColo());
+                newCart.setColor(cartDto.getColor());
                 double totalPrice = productItem.getPrice() * 1;
                 newCart.setPrice(totalPrice);
                 newCart.setShopping_cart(checkShoppingCart);
@@ -98,7 +98,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     cartItem.setQuantity(1);
                     cartItem.setProductId(productId);
                     cartItem.setSize(cartDto.getSize());
-                    cartItem.setColor(cartDto.getColo());
+                    cartItem.setColor(cartDto.getColor());
                     cartItem.setProductImageName(productItem.getProductItemImage());
                     try {
                         // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
@@ -139,7 +139,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     cartItem.setQuantity(1);
                     cartItem.setProductId(productId);
                     cartItem.setSize(cartDto.getSize());
-                    cartItem.setColor(cartDto.getColo());
+                    cartItem.setColor(cartDto.getColor());
                     cartItem.setProductImageName(productItem.getProductItemImage());
                     try {
                         // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis

@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartDto {
     private String size;
-    private String colo;
+    private String color;
 
 }

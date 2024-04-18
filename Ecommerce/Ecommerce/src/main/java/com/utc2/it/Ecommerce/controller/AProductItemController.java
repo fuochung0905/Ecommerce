@@ -39,7 +39,7 @@ public class AProductItemController {
         }
     }
     @PostMapping("/createNewProductItem")
-    public ResponseEntity<?>createNewProductItem(@RequestBody ProductItemDto dto,@RequestParam("file") MultipartFile file)throws IOException {
+    public ResponseEntity<?>createNewProductItem( ProductItemDto dto,@RequestParam("file") MultipartFile file)throws IOException {
         Long productItemId= productItemService.createNewProductItem(dto);
         try {
             String fileName=saveImageToDirectory(file);

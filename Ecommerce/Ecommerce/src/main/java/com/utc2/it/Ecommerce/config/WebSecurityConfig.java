@@ -36,6 +36,7 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth->{
                     auth.requestMatchers("/api/v1/auth/**").permitAll();
+                    auth.requestMatchers("/images/**").permitAll();
                     auth.requestMatchers("/v3/api-docs.yaml").permitAll();
                     auth.requestMatchers("/v3/api-docs/**").permitAll();
                     auth.requestMatchers("/swagger-ui/**").permitAll();

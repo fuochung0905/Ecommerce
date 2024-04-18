@@ -38,8 +38,8 @@ public class CartServiceImpl implements CartService {
     }
 
     public Integer AddItem(Long productId, CartDto cartDto) throws Exception {
-        if (cartDto.getColo() == null) {
-            cartDto.setColo("");
+        if (cartDto.getColor() == null) {
+            cartDto.setColor("");
         }
         if (cartDto.getSize() == null) {
             cartDto.setSize("");
@@ -64,7 +64,7 @@ public class CartServiceImpl implements CartService {
                 newCart.setQuantity(1);
                 newCart.setProductItem(product);
                 newCart.setSize(cartDto.getSize());
-                newCart.setColor(cartDto.getColo());
+                newCart.setColor(cartDto.getColor());
                 double totalPrice = product.getPrice() * 1;
                 newCart.setPrice(totalPrice);
                 newCart.setShopping_cart(checkShoppingCart);
