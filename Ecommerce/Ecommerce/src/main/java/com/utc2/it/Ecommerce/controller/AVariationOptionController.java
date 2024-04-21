@@ -34,6 +34,11 @@ public class AVariationOptionController {
         VariationOptionDto dto=variationService.getVariationById(variationOptionId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<?>getAllVariationOptionByProduct(@PathVariable("productId") Long productId) {
+        List<VariationOptionDto>variationOptions=variationService.getAllVariationByProduct(productId);
+        return new ResponseEntity<>(variationOptions, HttpStatus.OK);
+    }
 
 
 }

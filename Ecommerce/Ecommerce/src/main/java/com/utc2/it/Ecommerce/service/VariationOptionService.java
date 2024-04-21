@@ -9,7 +9,7 @@ public interface VariationOptionService {
     void deleteVariationOption(Long variationOptionId);
     VariationOptionDto getVariationById(Long variationOptionId);
     List<VariationOptionDto>getAllVariation();
-
+    List<VariationOptionDto>getAllVariationByProduct(Long productId);
     List<VariationOptionDto>getAllVariationOptionWithSizeByProduct(Long productId);
     List<VariationOptionDto>getAllVariationOptionWithColorByProduct(Long productId);
     List<VariationOptionDto>getAllVariationOptionByVariation(Long variationId);

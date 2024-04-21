@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VariationOptionDto {
-    private Long Id;
-    private String value;
-    private Long variationId;
 
+public class ListVariationDto {
+    private Long variationOptionId;
 }

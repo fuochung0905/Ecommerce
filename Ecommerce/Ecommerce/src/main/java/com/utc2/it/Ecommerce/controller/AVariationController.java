@@ -45,4 +45,9 @@ public class AVariationController {
         List<VariationDto>variationDtos=variationService.getVariationByProduct(productId);
         return new ResponseEntity<>(variationDtos,HttpStatus.OK);
    }
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?>getAllVariationByCategory(@PathVariable Long categoryId){
+        List<VariationDto>variationDtos=variationService.getVariationByProduct(categoryId);
+        return new ResponseEntity<>(variationDtos,HttpStatus.OK);
+    }
 }

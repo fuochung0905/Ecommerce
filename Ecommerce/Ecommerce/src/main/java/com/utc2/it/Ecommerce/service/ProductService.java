@@ -14,6 +14,7 @@ public interface ProductService {
     Long  createProduct( ProductDto productDto) throws IOException;
     ProductDto updateProduct(Long productId, ProductDto productDto) throws IOException;
     ProductDto getProductById(Long productId);
+    ProductDto getProductByProductItemId(Long productItemId);
     void deleteProductById(Long productId);
     List<ProductDto>getAllProduct();
     ProductDto addVariationForProduct(ProductItemVariationDto productVariationDto);

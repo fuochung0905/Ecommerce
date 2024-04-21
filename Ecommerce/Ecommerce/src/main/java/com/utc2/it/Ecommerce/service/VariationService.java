@@ -11,4 +11,5 @@ public interface VariationService {
     VariationDto getVariationById(Long variationId);
     List<VariationDto>getAllVariation();
     List<VariationDto>getVariationByProduct(Long productId);
+    List<VariationDto>getVariationByCategory(Long categoryId);
 }

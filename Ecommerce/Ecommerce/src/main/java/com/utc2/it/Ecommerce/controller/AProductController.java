@@ -81,5 +81,9 @@ public class AProductController {
         ProductDto dto=productService.removeVariationForProduct(productVariationDto);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
-
+    @GetMapping("/productItem/{productItemId}")
+    public ResponseEntity<?>getProductByProductItem(@PathVariable Long productItemId){
+        ProductDto productDto=productService.getProductByProductItemId(productItemId);
+        return new ResponseEntity<>(productDto,HttpStatus.OK);
+    }
 }

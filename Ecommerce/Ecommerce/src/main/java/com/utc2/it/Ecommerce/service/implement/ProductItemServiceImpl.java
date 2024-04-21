@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.dto.ListVariationDto;
 import com.utc2.it.Ecommerce.dto.ProductDto;
 import com.utc2.it.Ecommerce.dto.ProductItemDto;
 import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
@@ -11,13 +12,13 @@ import com.utc2.it.Ecommerce.repository.ProductRepository;
 import com.utc2.it.Ecommerce.repository.VariationOptionRepository;
 import com.utc2.it.Ecommerce.service.ProductItemService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.internal.util.collections.ArrayHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,20 @@ public class ProductItemServiceImpl implements ProductItemService {
         productItem.setQyt_stock(productItemDto.getQyt_stock());
         ProductItem save= productItemRepository.save(productItem);
         return save.getId();
+    }
+
+    @Override
+    public void addVariationOptionToProductItem(ProductItemVariationDto productItemVariationDto) {
+        Set<VariationOption>variationSet=new HashSet<>();
+        ProductItem productItem=productItemRepository.findById(productItemVariationDto.getProductItemId()).orElseThrow(()->new ResourceNotFoundException("product","productId", productItemVariationDto.getProductItemId()));
+            VariationOption variationOption=variationOptionRepository.findById(productItemVariationDto.getVariationOptionId()).orElseThrow(()->new ResourceNotFoundException("variation","variationId",productItemVariationDto.getVariationOptionId()));
+            variationSet=productItem.getVariations();
+            variationSet.add(variationOption);
+            productItem.setVariations(variationSet);
+          productItemRepository.save(productItem);
+
+
+
     }
 
     @Override
@@ -107,23 +122,6 @@ public class ProductItemServiceImpl implements ProductItemService {
         ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow(()->new NotFoundException("Not found productItem "));
         productItem.setProductItemImage(imageName);
         productItemRepository.save(productItem);
-    }
-
-    @Override
-    public ProductItemDto addVariationOptionToProductItem(ProductItemVariationDto productItemVariationDto) {Set<VariationOption> variationSet=null;
-       ProductItem productItem=productItemRepository.findById(productItemVariationDto.getProductItemId()).orElseThrow(()->new ResourceNotFoundException("product","productId", productItemVariationDto.getProductItemId()));
-       VariationOption variation=variationOptionRepository.findById(productItemVariationDto.getVariationOptionId()).orElseThrow(()->new ResourceNotFoundException("variation","variationId", productItemVariationDto.getVariationOptionId()));
-        variationSet=productItem.getVariations();
-        variationSet.add(variation);
-        productItem.setVariations(variationSet);
-        ProductItem saveProductItem=productItemRepository.save(productItem);
-        ProductItemDto productItemDto=new ProductItemDto();
-        productItemDto.setId(saveProductItem.getId());
-        productItemDto.setPrice(saveProductItem.getPrice());
-        productItemDto.setQyt_stock(saveProductItem.getQyt_stock());
-        productItemDto.setProductItemImage(saveProductItem.getProductItemImage());
-        productItemDto.setProductId(saveProductItem.getProduct().getId());
-        return productItemDto;
     }
 
     @Override

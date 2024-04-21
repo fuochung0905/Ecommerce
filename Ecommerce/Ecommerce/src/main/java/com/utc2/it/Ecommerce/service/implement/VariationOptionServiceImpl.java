@@ -78,6 +78,26 @@ public class VariationOptionServiceImpl implements VariationOptionService {
         }
         return variationDtos;
     }
+
+    @Override
+    public List<VariationOptionDto> getAllVariationByProduct(Long productId) {
+        ProductItem productItem=productItemRepository.findById(productId).orElseThrow();
+        Product product=productItem.getProduct();
+        Category category=product.getCategory();
+        List<Variation>variations=category.getVariations();
+        List<VariationOptionDto>variationOptionDtos= new ArrayList<>();
+        for (Variation variation:variations) {
+            for (VariationOption variationOption:variation.getVariationOptions()) {
+                VariationOptionDto dto= new VariationOptionDto();
+                dto.setId(variationOption.getId());
+                dto.setVariationId(variationOption.getVariation().getId());
+                dto.setValue(variationOption.getValue());
+                variationOptionDtos.add(dto);
+            }
+        }
+        return variationOptionDtos;
+    }
+
     @Override
     public List<VariationOptionDto> getAllVariationOptionWithSizeByProduct(Long productId) {
         Product product=productRepository.findById(productId).orElseThrow();

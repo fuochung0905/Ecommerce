@@ -3,8 +3,10 @@ package com.utc2.it.Ecommerce.service.implement;
 import com.utc2.it.Ecommerce.dto.VariationDto;
 import com.utc2.it.Ecommerce.entity.Category;
 import com.utc2.it.Ecommerce.entity.Product;
+import com.utc2.it.Ecommerce.entity.ProductItem;
 import com.utc2.it.Ecommerce.entity.Variation;
 import com.utc2.it.Ecommerce.repository.CategoryRepository;
+import com.utc2.it.Ecommerce.repository.ProductItemRepository;
 import com.utc2.it.Ecommerce.repository.ProductRepository;
 import com.utc2.it.Ecommerce.repository.VariationRepository;
 import com.utc2.it.Ecommerce.service.VariationService;
@@ -20,6 +22,7 @@ public class VariationServiceImpl implements VariationService {
     private final VariationRepository variationRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductItemRepository productItemRepository;
 
     @Override
     public VariationDto createNewVariation(VariationDto dto) {
@@ -72,6 +75,8 @@ public class VariationServiceImpl implements VariationService {
             VariationDto variationDto= new VariationDto();
             variationDto.setId(variation.getId());
             variationDto.setName(variation.getName());
+            Category category=categoryRepository.findById(variation.getCategory().getId()).orElseThrow();
+            variationDto.setCategoryName(category.getCategoryName());
             variationDto.setCategoryId(variation.getCategory().getId());
             variationDtos.add(variationDto);
         }
@@ -80,13 +85,32 @@ public class VariationServiceImpl implements VariationService {
 
     @Override
     public List<VariationDto> getVariationByProduct(Long productId) {
-        Product product=productRepository.findById(productId).orElseThrow();
+        ProductItem productItem= productItemRepository.findById(productId).orElseThrow();
+        Product product=productItem.getProduct();
         Category category=product.getCategory();
         List<Variation>variations=category.getVariations();
         List<VariationDto>variationDtos= new ArrayList<>();
         for (Variation variation:variations) {
             VariationDto dto= new VariationDto();
             dto.setId(variation.getId());
+            dto.setCategoryName(variation.getCategory().getCategoryName());
+            dto.setName(variation.getName());
+            dto.setCategoryId(variation.getCategory().getId());
+            variationDtos.add(dto);
+        }
+        return variationDtos;
+    }
+
+    @Override
+    public List<VariationDto> getVariationByCategory(Long categoryId) {
+        Category category=categoryRepository.findById(categoryId).orElseThrow();
+        List<Variation>variations=category.getVariations();
+        List<VariationDto>variationDtos= new ArrayList<>();
+        for (Variation variation:variations) {
+            VariationDto dto= new VariationDto();
+            dto.setId(variation.getId());
+
+            dto.setCategoryName(variation.getCategory().getCategoryName());
             dto.setName(variation.getName());
             dto.setCategoryId(variation.getCategory().getId());
             variationDtos.add(dto);

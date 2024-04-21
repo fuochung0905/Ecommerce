@@ -1,5 +1,7 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.entity.ProductItem;
+import com.utc2.it.Ecommerce.repository.ProductItemRepository;
 import com.utc2.it.Ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import java.util.Set;
 public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductItemRepository productItemRepository;
 
 
     @Override
@@ -62,6 +65,17 @@ public class ProductServiceImpl implements ProductService {
         ProductDto productDto = new ProductDto();
         Product product= productRepository.findById(productId).orElseThrow(()->
                 new ResourceNotFoundException("product","productId",productId));
+        if(product!=null) {
+            return getProductDto(productDto, product);
+        }
+        return null;
+    }
+
+    @Override
+    public ProductDto getProductByProductItemId(Long productItemId) {
+        ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
+        Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+        ProductDto productDto = new ProductDto();
         if(product!=null) {
             return getProductDto(productDto, product);
         }

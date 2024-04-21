@@ -1,6 +1,7 @@
 package com.utc2.it.Ecommerce.controller;
 
 import com.utc2.it.Ecommerce.dto.DeleteResponse;
+import com.utc2.it.Ecommerce.dto.ListVariationDto;
 import com.utc2.it.Ecommerce.dto.ProductItemDto;
 import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
 import com.utc2.it.Ecommerce.service.ProductItemService;
@@ -17,7 +18,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,7 +48,6 @@ public class AProductItemController {
         try {
             String fileName=saveImageToDirectory(file);
             productItemService.saveProductItemImage(productItemId,fileName);
-
             return new ResponseEntity<>("Add product successfully", HttpStatus.CREATED);
         }catch (IOException ex){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not upload image: " + ex.getMessage());
@@ -75,16 +78,20 @@ public class AProductItemController {
         List<ProductItemDto>productItemDtos=productItemService.getAllProductItem();
         return new ResponseEntity<>(productItemDtos,HttpStatus.OK);
     }
-    @PostMapping("/addVariation")
-    public ResponseEntity<?>addVariationForProduct(@RequestBody ProductItemVariationDto productItemVariationDto){
-        ProductItemDto productItemDto=productItemService.addVariationOptionToProductItem(productItemVariationDto);
-        return new ResponseEntity<>(productItemDto,HttpStatus.OK);
-    }
+
     @PostMapping("/removeVariation")
     public ResponseEntity<?>removeVariationForProduct(@RequestBody ProductItemVariationDto productItemVariationDto){
         ProductItemDto productItemDto=productItemService.RemoveVariationOptionToProductItem(productItemVariationDto);
         return new ResponseEntity<>(productItemDto,HttpStatus.OK);
     }
+    @PostMapping("/addVariation")
+    public ResponseEntity<?>addVariationsForProduct(@RequestBody List<ProductItemVariationDto>  productItemVariationDtos){
+       for(ProductItemVariationDto productItemVariationDto:productItemVariationDtos){
+           productItemService.addVariationOptionToProductItem(productItemVariationDto);
+       }
+        return new ResponseEntity<>("Add successfully",HttpStatus.OK);
+    }
+
 
 
 }
