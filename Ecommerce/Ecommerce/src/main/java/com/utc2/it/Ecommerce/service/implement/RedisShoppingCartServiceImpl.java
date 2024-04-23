@@ -2,8 +2,10 @@ package com.utc2.it.Ecommerce.service.implement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.utc2.it.Ecommerce.dto.ProductVariationDto;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
+import com.utc2.it.Ecommerce.service.ProductItemService;
 import com.utc2.it.Ecommerce.service.RedisShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     @Autowired
     private ObjectMapper objectMapper;
     private final UserRepository userRepository;
+    private final ProductItemService productItemService;
     private final ProductRepository productRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final ProductItemRepository productItemRepository;
@@ -37,13 +40,8 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
         return shoppingCart;
     }
     @Override
-    public void addToCart(Long  productId, CartDto cartDto) {
-        if (cartDto.getColor() == null) {
-            cartDto.setColor("");
-        }
-        if (cartDto.getSize() == null) {
-            cartDto.setSize("");
-        }
+    public void addToCart(List<ProductVariationDto>productVariationDtos) {
+        ProductItem productItem=productItemService.getProductItemByProductAndVarationOption(productVariationDtos);
         ShoppingCart newShoppingCart = new ShoppingCart();
         String currentUsername = getCurrentUsername();
         User user = getUser(currentUsername);
@@ -59,21 +57,19 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
         }
         else {
 
-            ProductItem productItem=productItemRepository.findById(productId).orElseThrow();
+
             CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
             if(cartDetail==null) {
                 CartDetail newCart= new CartDetail();
                 newCart.setQuantity(1);
                 newCart.setProductItem(productItem);
-                newCart.setSize(cartDto.getSize());
-                newCart.setColor(cartDto.getColor());
                 double totalPrice = productItem.getPrice() * 1;
                 newCart.setPrice(totalPrice);
                 newCart.setShopping_cart(checkShoppingCart);
                 CartDetail save= cartDetailRepository.save(newCart);
                 // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-                if (redisTemplate.opsForHash().hasKey(key, productId.toString())) {
-                    String existItemJSON = (String) redisTemplate.opsForHash().get(key, productId.toString());
+                if (redisTemplate.opsForHash().hasKey(key, productItem.getId().toString())) {
+                    String existItemJSON = (String) redisTemplate.opsForHash().get(key, productItem.getId().toString());
                     if (existItemJSON != null) {
                         try {
                             // Chuyển đổi chuỗi JSON thành đối tượng ShoppingCartItem
@@ -81,7 +77,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                             exist.setQuantity(exist.getQuantity() + 1);
                             // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
                             String updatedItemJSON = objectMapper.writeValueAsString(exist);
-                            redisTemplate.opsForHash().put(key, productId.toString(), updatedItemJSON);
+                            redisTemplate.opsForHash().put(key, productItem.getId().toString(), updatedItemJSON);
                         } catch (Exception e) {
                             e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi khi chuyển đổi dữ liệu từ JSON thành đối tượng
                         }
@@ -96,9 +92,8 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     cartItem.setPrice(save.getPrice());
                     cartItem.setUserId(user.getId());
                     cartItem.setQuantity(1);
-                    cartItem.setProductId(productId);
-                    cartItem.setSize(cartDto.getSize());
-                    cartItem.setColor(cartDto.getColor());
+                    cartItem.setProductId(productItem.getId());
+
                     cartItem.setProductImageName(productItem.getProductItemImage());
                     try {
                         // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
@@ -113,8 +108,8 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                 cartDetail.setQuantity(cartDetail.getQuantity()+1);
               CartDetail save=  cartDetailRepository.save(cartDetail);
                 // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-                if (redisTemplate.opsForHash().hasKey(key, productId.toString())) {
-                    String existItemJSON = (String) redisTemplate.opsForHash().get(key, productId.toString());
+                if (redisTemplate.opsForHash().hasKey(key, productItem.getId().toString())) {
+                    String existItemJSON = (String) redisTemplate.opsForHash().get(key, productItem.getId().toString());
                     if (existItemJSON != null) {
                         try {
                             // Chuyển đổi chuỗi JSON thành đối tượng ShoppingCartItem
@@ -122,7 +117,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                             exist.setQuantity(exist.getQuantity() + 1);
                             // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
                             String updatedItemJSON = objectMapper.writeValueAsString(exist);
-                            redisTemplate.opsForHash().put(key, productId.toString(), updatedItemJSON);
+                            redisTemplate.opsForHash().put(key, productItem.getId().toString(), updatedItemJSON);
                         } catch (Exception e) {
                             e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi khi chuyển đổi dữ liệu từ JSON thành đối tượng
                         }
@@ -137,9 +132,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     cartItem.setPrice(save.getPrice());
                     cartItem.setUserId(user.getId());
                     cartItem.setQuantity(1);
-                    cartItem.setProductId(productId);
-                    cartItem.setSize(cartDto.getSize());
-                    cartItem.setColor(cartDto.getColor());
+                    cartItem.setProductId(productItem.getId());
                     cartItem.setProductImageName(productItem.getProductItemImage());
                     try {
                         // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis

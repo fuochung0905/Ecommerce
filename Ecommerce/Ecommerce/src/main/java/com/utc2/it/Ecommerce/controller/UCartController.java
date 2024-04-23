@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.dto.ProductVariationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/cart")
 public class UCartController {
-
     private final RedisShoppingCartService redisShoppingCartService;
 
     @GetMapping("/count")
@@ -22,9 +22,9 @@ public class UCartController {
         Long cartCount= redisShoppingCartService.getCartCount();
         return new ResponseEntity<>(cartCount,HttpStatus.OK);
     }
-    @PutMapping("/add/{productId}")
-    public ResponseEntity<String>createCart(@RequestBody CartDto cartDto, @PathVariable Long productId) throws Exception {
-        redisShoppingCartService.addToCart(productId,cartDto);
+    @PutMapping("/add")
+    public ResponseEntity<String>createCart(@RequestBody List<ProductVariationDto>productVariationDtos) throws Exception {
+        redisShoppingCartService.addToCart(productVariationDtos);
         return new ResponseEntity<>("Add successfully", HttpStatus.CREATED);
     }
         @PutMapping("/remove/{productId}")
@@ -32,18 +32,6 @@ public class UCartController {
        redisShoppingCartService.removeCart(productId);
         return new ResponseEntity<>("Delete successfully",HttpStatus.CREATED);
     }
-
-
-//    @PutMapping("/add/{productId}")
-//    public ResponseEntity<Integer>addCart(@RequestBody CartDto cartDto, @PathVariable Long productId) throws Exception {
-//        Integer cartCount=cartService.AddItem(productId,cartDto);
-//        return new ResponseEntity<>(cartCount, HttpStatus.CREATED);
-//    }
-//    @PutMapping("/remove/{productId}")
-//    public ResponseEntity<Integer>removeCart(@PathVariable Long productId) throws Exception {
-//        Integer cartCount=cartService.RemoveCartItem(productId);
-//        return new ResponseEntity<>(cartCount,HttpStatus.CREATED);
-//    }
     @GetMapping("/")
     public ResponseEntity<List<ShoppingCartItem>>getUserCart() throws Exception {
         List<ShoppingCartItem>userCartDtos= redisShoppingCartService.getUserCart();

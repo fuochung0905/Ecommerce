@@ -11,7 +11,7 @@ public interface VariationOptionService {
     List<VariationOptionDto>getAllVariation();
     List<VariationOptionDto>getAllVariationByProduct(Long productId);
     List<VariationOptionDto>getAllVariationOptionWithSizeByProduct(Long productId);
-    List<VariationOptionDto>getAllVariationOptionWithColorByProduct(Long productId);
-    List<VariationOptionDto>getAllVariationOptionByVariation(Long variationId);
-
+    List<VariationOptionDto>getAllVariationOptionWithByProduct(Long productId);
+    List<VariationOptionDto>getAllVariationOptionWitColorByProduct(Long productId);
+    List<VariationOptionDto>getAllVariationOptionWithSizeByProductItem(Long productItemId);
 }

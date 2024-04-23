@@ -1,5 +1,7 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.dto.VariationDto;
+import com.utc2.it.Ecommerce.service.VariationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +18,11 @@ import java.util.List;
 @RequestMapping("/api/user/variation")
 @RequiredArgsConstructor
 public class UVariationController {
-    private final VariationOptionService variationService;
-    @GetMapping("/size/{productId}")
-    public ResponseEntity<List<VariationOptionDto>>getVariationOptionWithSizeByProduct(@PathVariable Long productId){
-        List<VariationOptionDto>variationOptionDtos=variationService.getAllVariationOptionWithSizeByProduct(productId);
-        return new ResponseEntity<>(variationOptionDtos,HttpStatus.OK);
-    }
-    @GetMapping("/color/{productId}")
-    public ResponseEntity<List<VariationOptionDto>>getVariationOptionWithColorByProduct(@PathVariable Long productId){
-        List<VariationOptionDto>variationOptionDtos=variationService.getAllVariationOptionWithColorByProduct(productId);
-        return new ResponseEntity<>(variationOptionDtos,HttpStatus.OK);
-    }
+   private final VariationService variationService;
+   @GetMapping("/product/{productId}")
+    public ResponseEntity<?>getVariationByProduct(@PathVariable Long productId) {
+       List<VariationDto>variationDtos=variationService.getVariationUserByProduct(productId);
+       return new ResponseEntity<>(variationDtos, HttpStatus.OK);
+   }
+
 }

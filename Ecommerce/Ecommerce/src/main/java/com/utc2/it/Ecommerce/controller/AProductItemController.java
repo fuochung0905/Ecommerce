@@ -1,9 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
-import com.utc2.it.Ecommerce.dto.DeleteResponse;
-import com.utc2.it.Ecommerce.dto.ListVariationDto;
-import com.utc2.it.Ecommerce.dto.ProductItemDto;
-import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
+import com.utc2.it.Ecommerce.dto.*;
 import com.utc2.it.Ecommerce.service.ProductItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -65,7 +62,7 @@ public class AProductItemController {
     }
     @GetMapping("/{productItemId}")
     public ResponseEntity<?>getProductItemById(@PathVariable Long productItemId){
-        ProductItemDto productItemDto= productItemService.getProductItemById(productItemId);
+        ProductDto productItemDto= productItemService.getProductItemById(productItemId);
         return new ResponseEntity<>(productItemDto,HttpStatus.OK);
     }
     @GetMapping("/product/{productId}")
@@ -79,14 +76,11 @@ public class AProductItemController {
         return new ResponseEntity<>(productItemDtos,HttpStatus.OK);
     }
 
-    @PostMapping("/removeVariation")
-    public ResponseEntity<?>removeVariationForProduct(@RequestBody ProductItemVariationDto productItemVariationDto){
-        ProductItemDto productItemDto=productItemService.RemoveVariationOptionToProductItem(productItemVariationDto);
-        return new ResponseEntity<>(productItemDto,HttpStatus.OK);
-    }
+
     @PostMapping("/addVariation")
     public ResponseEntity<?>addVariationsForProduct(@RequestBody List<ProductItemVariationDto>  productItemVariationDtos){
        for(ProductItemVariationDto productItemVariationDto:productItemVariationDtos){
+
            productItemService.addVariationOptionToProductItem(productItemVariationDto);
        }
         return new ResponseEntity<>("Add successfully",HttpStatus.OK);

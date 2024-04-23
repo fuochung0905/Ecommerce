@@ -19,8 +19,10 @@ public class ProductItem {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    private int qyt_stock;
 
+
+    private int qyt_stock;
+    private Long idColor;
     private String productItemImage;
     private double price;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,10 +31,10 @@ public class ProductItem {
     private OrderDetail orderDetail;
     @OneToMany(mappedBy = "productItem",cascade = CascadeType.ALL)
     private List<CartDetail> cartDetails= new ArrayList<>();
-    @ManyToMany()
-    @JoinTable(name = "productItem_variation",
-            joinColumns = @JoinColumn(name = "productItem_id"),
-            inverseJoinColumns = @JoinColumn(name = "variation_id"))
-    private Set<VariationOption> variations= new HashSet<>();
+
+
+    @OneToMany(mappedBy = "productItem",cascade = CascadeType.ALL)
+    private List<ProductItemVariationOption> productItemVariationOptions= new ArrayList<>();
+
 
 }

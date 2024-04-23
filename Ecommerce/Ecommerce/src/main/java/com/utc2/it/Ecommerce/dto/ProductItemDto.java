@@ -10,7 +10,8 @@ import lombok.Setter;
 public class ProductItemDto {
     private Long Id;
     private int qyt_stock;
-    private String productItemImage;
+    private String image;
     private double price;
     private Long productId;
+    private Long idColor;
 }

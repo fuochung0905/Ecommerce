@@ -2,6 +2,7 @@ package com.utc2.it.Ecommerce.service;
 
 
 
+import com.utc2.it.Ecommerce.dto.CurrentDetailProductDto;
 import org.springframework.data.repository.query.Param;
 import com.utc2.it.Ecommerce.dto.ProductDto;
 import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
@@ -21,4 +22,5 @@ public interface ProductService {
     ProductDto removeVariationForProduct(ProductItemVariationDto productVariationDto);
     List<VariationOptionDto>getAllVariationProduct(@Param("productId")Long productId);
     void saveProductImage(Long productId, String imageName);
+    CurrentDetailProductDto getCurrentDetailProduct(Long productId);
 }

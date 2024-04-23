@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,12 +21,12 @@ public class VariationOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    private String name;
     private String value;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_variation_id")
     private Variation variation;
-    @ManyToMany()
-    private Set<ProductItem> productItems= new HashSet<>();
+
+    @OneToMany(mappedBy = "variationOption",cascade = CascadeType.ALL)
+    private List<ProductItemVariationOption> productItemVariationOptions= new ArrayList<>();
 
 }

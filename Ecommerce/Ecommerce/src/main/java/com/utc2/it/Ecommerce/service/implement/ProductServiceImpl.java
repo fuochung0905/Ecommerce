@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.dto.CurrentDetailProductDto;
 import com.utc2.it.Ecommerce.entity.ProductItem;
 import com.utc2.it.Ecommerce.repository.ProductItemRepository;
 import com.utc2.it.Ecommerce.service.ProductService;
@@ -28,8 +29,6 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductItemRepository productItemRepository;
-
-
     @Override
     public Long createProduct(ProductDto productDto) throws IOException {
         Product product= new Product();
@@ -87,7 +86,9 @@ public class ProductServiceImpl implements ProductService {
         productDto.setProductName(product.getProductName());
         productDto.setDescription(product.getDescription());
         productDto.setCategoryId(product.getCategory().getId());
-        productDto.setImage(productDto.getImage());
+        productDto.setQuantity(product.getQuantity());
+        productDto.setPrice(product.getPrice());
+        productDto.setImage(product.getImageName());
         return productDto;
     }
 
@@ -107,6 +108,8 @@ public class ProductServiceImpl implements ProductService {
             dto.setId(product.getId());
             dto.setProductName(product.getProductName());
             dto.setDescription(product.getDescription());
+            dto.setQuantity(product.getQuantity());
+            dto.setPrice(product.getPrice());
             dto.setImage(product.getImageName());
             productDtos.add(dto);
         }
@@ -170,5 +173,16 @@ public class ProductServiceImpl implements ProductService {
         Product product=productRepository.findById(productId).orElseThrow(()->new NotFoundException("Not found product "));
         product.setImageName(imageName);
         productRepository.save(product);
+    }
+
+    @Override
+    public CurrentDetailProductDto getCurrentDetailProduct(Long productId) {
+        Product product=productRepository.findById(productId).orElseThrow();
+        CurrentDetailProductDto currentDetailProductDto=new CurrentDetailProductDto();
+        currentDetailProductDto.setProductId(product.getId());
+        currentDetailProductDto.setQuantity(product.getQuantity());
+        currentDetailProductDto.setPrice(product.getPrice());
+        currentDetailProductDto.setImage(product.getImageName());
+        return currentDetailProductDto;
     }
 }

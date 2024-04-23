@@ -25,7 +25,10 @@ public class Product {
     @NotNull
     private String productName;
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private  String description;
+    private int quantity;
+    private double price;
     @Column(name = "image_name")
     private String imageName;
     @ManyToOne(fetch = FetchType.LAZY)

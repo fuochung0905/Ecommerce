@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import com.utc2.it.Ecommerce.dto.VariationOptionDto;
 import com.utc2.it.Ecommerce.exception.ResourceNotFoundException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -100,12 +99,13 @@ public class VariationOptionServiceImpl implements VariationOptionService {
 
     @Override
     public List<VariationOptionDto> getAllVariationOptionWithSizeByProduct(Long productId) {
-        Product product=productRepository.findById(productId).orElseThrow();
+        ProductItem productItem=productItemRepository.findById(productId).orElseThrow();
+        Product product=productItem.getProduct();
         Category category=product.getCategory();
         List<Variation>variations=category.getVariations();
         List<VariationOptionDto>variationOptionDtos= new ArrayList<>();
         for (Variation variation:variations) {
-            if(variation.getName()=="size"){
+            if(Objects.equals(variation.getName(), "Kích thước")){
                 for (VariationOption variationOption:variation.getVariationOptions()) {
                     VariationOptionDto dto= new VariationOptionDto();
                     dto.setId(variationOption.getId());
@@ -118,37 +118,77 @@ public class VariationOptionServiceImpl implements VariationOptionService {
         return variationOptionDtos;
     }
     @Override
-    public List<VariationOptionDto> getAllVariationOptionWithColorByProduct(Long productId) {
+    public List<VariationOptionDto> getAllVariationOptionWithByProduct(Long productId) {
+        boolean datontai=false;
         Product product=productRepository.findById(productId).orElseThrow();
-        Category category=product.getCategory();
-        List<Variation>variations=category.getVariations();
         List<VariationOptionDto>variationOptionDtos= new ArrayList<>();
-        for (Variation variation:variations) {
-            if(variation.getName()=="color"){
-                for (VariationOption variationOption:variation.getVariationOptions()) {
-                    VariationOptionDto dto= new VariationOptionDto();
-                    dto.setId(variationOption.getId());
-                    dto.setVariationId(variationOption.getVariation().getId());
-                    dto.setValue(variationOption.getValue());
-                    variationOptionDtos.add(dto);
+       List<ProductItem>productItems=product.getProductItems();
+       List<Long>variationOptionIds= new LinkedList<>();
+       for(ProductItem productItem:productItems){
+            List<VariationOption>variationOptions=variationOptionRepository.findVariationOptionsByProductItem(productItem);
+          for (VariationOption variationOption:variationOptions){
+              Long variationOptionId=variationOption.getId();
+                for(Long itemId:variationOptionIds){
+                    if(itemId.equals(variationOptionId)){
+                        datontai=true;
+                        break;
+                    }
                 }
-            }
-        }
-        return variationOptionDtos;
-    }
-    @Override
-    public List<VariationOptionDto> getAllVariationOptionByVariation(Long variationId) {
-        Variation variation=variationRepository.findById(variationId).orElseThrow();
-        List<VariationOption>variationOptions=variationOptionRepository.getAllVariationByVariation(variation);
-        List<VariationOptionDto>variationOptionDtos= new ArrayList<>();
-        for (VariationOption variationOption:variationOptions) {
+                if(!datontai){
+                    variationOptionIds.add(variationOption.getId());
+                }
+          }
+       }
+        for(Long variationOptionId:variationOptionIds){
+            VariationOption variationOption=variationOptionRepository.findById(variationOptionId).orElseThrow();
             VariationOptionDto variationOptionDto= new VariationOptionDto();
             variationOptionDto.setId(variationOption.getId());
-            variationOptionDto.setVariationId(variationOption.getVariation().getId());
             variationOptionDto.setValue(variationOption.getValue());
+            variationOptionDto.setVariationId(variationOption.getVariation().getId());
             variationOptionDtos.add(variationOptionDto);
         }
         return variationOptionDtos;
+    }
+    @Override
+    public List<VariationOptionDto> getAllVariationOptionWitColorByProduct(Long productId) {
+        Product product=productRepository.findById(productId).orElseThrow();
+        Category category=product.getCategory();
+        List<Variation>variations=category.getVariations();
+        List<VariationOptionDto>variationOptionDtos= new ArrayList<>();
+        for (Variation variation:variations) {
+            if(Objects.equals(variation.getName(), "Màu sắc")){
+                for (VariationOption variationOption:variation.getVariationOptions()) {
+                    VariationOptionDto dto= new VariationOptionDto();
+                    dto.setId(variationOption.getId());
+                    dto.setVariationId(variationOption.getVariation().getId());
+                    dto.setValue(variationOption.getValue());
+                    variationOptionDtos.add(dto);
+                }
+            }
+        }
+        return variationOptionDtos;
+    }
+
+    @Override
+    public List<VariationOptionDto> getAllVariationOptionWithSizeByProductItem(Long productItemId) {
+       ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
+       Product product= productItem.getProduct();
+       Category category=product.getCategory();
+       List<Variation>variations=category.getVariations();
+       List<VariationOptionDto>variationOptionDtos= new ArrayList<>();
+       for (Variation variation:variations) {
+           if(Objects.equals(variation.getName(), "Kích thước")){
+               for (VariationOption variationOption:variation.getVariationOptions()) {
+                   VariationOptionDto dto= new VariationOptionDto();
+                   dto.setId(variationOption.getId());
+                   dto.setVariationId(variationOption.getVariation().getId());
+                   dto.setValue(variationOption.getValue());
+                   variationOptionDtos.add(dto);
+               }
+           }
+       }
+       return variationOptionDtos;
+
     }
 
 }

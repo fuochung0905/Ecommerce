@@ -13,8 +13,11 @@ import java.util.List;
 
 @Repository
 public interface VariationOptionRepository extends JpaRepository<VariationOption,Long> {
-    @Query("select vo from VariationOption  vo where vo.productItems=:productItem")
-    List<VariationOption>getAllVariationOptionByProduct(@Param("productItem") ProductItem productItem);
+//    @Query("select vo from VariationOption  vo where vo.productItems=:productItem")
+//    List<VariationOption>getAllVariationOptionByProduct(@Param("productItem") ProductItem productItem);
     @Query("select vo from VariationOption  vo where vo.variation=:variation")
     List<VariationOption>getAllVariationByVariation(@Param("variation")Variation variation);
+
+    @Query("SELECT pivo.variationOption FROM ProductItemVariationOption pivo WHERE pivo.productItem = :productItem")
+    List<VariationOption> findVariationOptionsByProductItem(@Param("productItem") ProductItem productItem);
 }

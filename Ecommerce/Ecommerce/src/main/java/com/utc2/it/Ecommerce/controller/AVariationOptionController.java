@@ -39,6 +39,21 @@ public class AVariationOptionController {
         List<VariationOptionDto>variationOptions=variationService.getAllVariationByProduct(productId);
         return new ResponseEntity<>(variationOptions, HttpStatus.OK);
     }
+    @GetMapping("/size/product/{productId}")
+    public ResponseEntity<?>getAllVariationOptionWithSizeByProduct(@PathVariable Long productId) {
+        List<VariationOptionDto>variationOptionDtos=variationService.getAllVariationOptionWithSizeByProduct(productId);
+        return new ResponseEntity<>(variationOptionDtos, HttpStatus.OK);
+    }
+    @GetMapping("/color/product/{productId}")
+    public ResponseEntity<?>getAllVariationOptionWithColorByProduct(@PathVariable Long productId) {
+        List<VariationOptionDto>variationOptionDtos=variationService.getAllVariationOptionWitColorByProduct(productId);
+        return new ResponseEntity<>(variationOptionDtos, HttpStatus.OK);
+    }
+    @GetMapping("/productItem/{productItemId}")
+    public ResponseEntity<?>getAllVariationOptionWithSizeByProductItem(@PathVariable Long productItemId){
+        List<VariationOptionDto>variationOptionDtos=variationService.getAllVariationOptionWithSizeByProductItem(productItemId);
+        return new ResponseEntity<>(variationOptionDtos, HttpStatus.OK);
+    }
 
 
 }

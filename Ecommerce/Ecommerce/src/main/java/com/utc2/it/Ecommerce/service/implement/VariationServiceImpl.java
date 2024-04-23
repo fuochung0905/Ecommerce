@@ -100,22 +100,21 @@ public class VariationServiceImpl implements VariationService {
         }
         return variationDtos;
     }
-
-    @Override
-    public List<VariationDto> getVariationByCategory(Long categoryId) {
-        Category category=categoryRepository.findById(categoryId).orElseThrow();
-        List<Variation>variations=category.getVariations();
-        List<VariationDto>variationDtos= new ArrayList<>();
-        for (Variation variation:variations) {
-            VariationDto dto= new VariationDto();
-            dto.setId(variation.getId());
-
-            dto.setCategoryName(variation.getCategory().getCategoryName());
-            dto.setName(variation.getName());
-            dto.setCategoryId(variation.getCategory().getId());
-            variationDtos.add(dto);
-        }
+    public List<VariationDto>getVariationUserByProduct(Long productId){
+        Product product=productRepository.findById(productId).orElseThrow();
+       Category category=product.getCategory();
+       List<Variation>variations=category.getVariations();
+       List<VariationDto>variationDtos= new ArrayList<>();
+       for(Variation variation:variations){
+           VariationDto variationDto= new VariationDto();
+           variationDto.setId(variation.getId());
+           variationDto.setName(variation.getName());
+           variationDto.setCategoryId(variation.getCategory().getId());
+           variationDtos.add(variationDto);
+       }
         return variationDtos;
     }
+
+
 
 }

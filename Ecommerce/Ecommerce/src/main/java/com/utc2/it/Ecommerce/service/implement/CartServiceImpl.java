@@ -1,8 +1,11 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.dto.ProductItemDto;
+import com.utc2.it.Ecommerce.dto.ProductVariationDto;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.CartService;
+import com.utc2.it.Ecommerce.service.ProductItemService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import com.utc2.it.Ecommerce.dto.UserCartDto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final CartDetailRepository cartDetailRepository;
     private final ProductItemRepository productItemRepository;
+    private final ProductItemService productItemService;
     @PersistenceContext
     private EntityManager entityManager;
     private User getUser(String username){
@@ -36,14 +41,8 @@ public class CartServiceImpl implements CartService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName(); // Trả về tên người dùng hiện đang đăng nhập
     }
-
-    public Integer AddItem(Long productId, CartDto cartDto) throws Exception {
-        if (cartDto.getColor() == null) {
-            cartDto.setColor("");
-        }
-        if (cartDto.getSize() == null) {
-            cartDto.setSize("");
-        }
+    public Integer AddItem(List<ProductVariationDto>productVariationDtos) throws Exception {
+        ProductItem productItem=productItemService.getProductItemByProductAndVarationOption(productVariationDtos);
         ShoppingCart newShoppingCart = new ShoppingCart();
         String currentUsername = getCurrentUsername();
         User user = getUser(currentUsername);
@@ -56,16 +55,12 @@ public class CartServiceImpl implements CartService {
             shoppingCartRepository.save(newShoppingCart);
         }
         else {
-            ProductItem product = productItemRepository.findById(productId).orElseThrow();
-            CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, product);
-
+            CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
             if(cartDetail==null) {
                 CartDetail newCart= new CartDetail();
                 newCart.setQuantity(1);
-                newCart.setProductItem(product);
-                newCart.setSize(cartDto.getSize());
-                newCart.setColor(cartDto.getColor());
-                double totalPrice = product.getPrice() * 1;
+                newCart.setProductItem(productItem);
+                double totalPrice = productItem.getPrice() * 1;
                 newCart.setPrice(totalPrice);
                 newCart.setShopping_cart(checkShoppingCart);
                 cartDetailRepository.save(newCart);
