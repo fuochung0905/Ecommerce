@@ -12,6 +12,8 @@ import java.util.List;
 
 @Repository
 public interface ProductItemRepository extends JpaRepository<ProductItem,Long> {
+    @Query("select pi from ProductItem  pi where pi.idColor=:colorId")
+    ProductItem findByColorId(@Param("colorId") Long colorId);
 //   @Query("select pi from ProductItem  pi " +
 ////           "join pi.variations vo " +
 //           "where " +

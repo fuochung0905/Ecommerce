@@ -1,22 +1,13 @@
 package com.utc2.it.Ecommerce.service.implement;
 
-import com.utc2.it.Ecommerce.dto.CurrentDetailProductDto;
-import com.utc2.it.Ecommerce.entity.ProductItem;
-import com.utc2.it.Ecommerce.repository.ProductItemRepository;
+import com.utc2.it.Ecommerce.dto.*;
+import com.utc2.it.Ecommerce.entity.*;
+import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.utc2.it.Ecommerce.dto.ProductDto;
-import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
-import com.utc2.it.Ecommerce.dto.VariationOptionDto;
-import com.utc2.it.Ecommerce.entity.Category;
-import com.utc2.it.Ecommerce.entity.Product;
-import com.utc2.it.Ecommerce.entity.VariationOption;
 import com.utc2.it.Ecommerce.exception.NotFoundException;
 import com.utc2.it.Ecommerce.exception.ResourceNotFoundException;
-import com.utc2.it.Ecommerce.repository.CategoryRepository;
-import com.utc2.it.Ecommerce.repository.ProductRepository;
-import com.utc2.it.Ecommerce.repository.VariationRepository;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -29,6 +20,8 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductItemRepository productItemRepository;
+    private final VariationOptionRepository variationOptionRepository;
+    private final ProductItemVariationOptionRepository productItemVariationOptionRepository;
     @Override
     public Long createProduct(ProductDto productDto) throws IOException {
         Product product= new Product();
@@ -184,5 +177,22 @@ public class ProductServiceImpl implements ProductService {
         currentDetailProductDto.setPrice(product.getPrice());
         currentDetailProductDto.setImage(product.getImageName());
         return currentDetailProductDto;
+    }
+
+    @Override
+    public ProductDto getProductByIsColorAndByVariationOption(Long colorId,Long variationOptionId) {
+        ProductItem productItem=productItemRepository.findByColorId(colorId);
+        VariationOption variationOption=variationOptionRepository.findById(variationOptionId).orElseThrow();
+        ProductItemVariationOption productItemVariationOption=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(productItem,variationOption);
+        ProductDto productDto= new ProductDto();
+        productDto.setId(productItem.getId());
+        Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+        productDto.setPrice(productItem.getPrice());
+        productDto.setProductName(product.getProductName());
+        productDto.setDescription(product.getDescription());
+        productDto.setCategoryId(product.getCategory().getId());
+        productDto.setQuantity(productItemVariationOption.getQuantity());
+        productDto.setImage(productItem.getProductItemImage());
+        return productDto;
     }
 }

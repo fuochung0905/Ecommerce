@@ -15,5 +15,6 @@ import java.util.List;
 public interface ProductItemVariationOptionRepository extends JpaRepository<ProductItemVariationOption, Long> {
 @Query("select pivo from ProductItemVariationOption  pivo where pivo.productItem =:productItem")
     List<ProductItemVariationOption> findAllByProductItemId(@Param("productItem") ProductItem productItem);
-
+   @Query("select pivo from ProductItemVariationOption pivo where pivo.productItem=:productItem and pivo.variationOption=:variationOption")
+    ProductItemVariationOption findProductItemVariationOptionByProductItemAndVariationOption(@Param("productItem") ProductItem productItem,@Param("variationOption")VariationOption variationOption);
 }

@@ -2,11 +2,8 @@ package com.utc2.it.Ecommerce.service;
 
 
 
-import com.utc2.it.Ecommerce.dto.CurrentDetailProductDto;
+import com.utc2.it.Ecommerce.dto.*;
 import org.springframework.data.repository.query.Param;
-import com.utc2.it.Ecommerce.dto.ProductDto;
-import com.utc2.it.Ecommerce.dto.ProductItemVariationDto;
-import com.utc2.it.Ecommerce.dto.VariationOptionDto;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,4 +20,5 @@ public interface ProductService {
     List<VariationOptionDto>getAllVariationProduct(@Param("productId")Long productId);
     void saveProductImage(Long productId, String imageName);
     CurrentDetailProductDto getCurrentDetailProduct(Long productId);
+    ProductDto getProductByIsColorAndByVariationOption(Long colorId,Long variationOptionId);
 }
