@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCartDto {
+    private Long idColor;
+    private Long idSize;
     private Long Id;
     private int quantity;
     private double price;

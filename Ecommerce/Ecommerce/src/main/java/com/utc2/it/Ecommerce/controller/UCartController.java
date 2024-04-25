@@ -1,11 +1,12 @@
 package com.utc2.it.Ecommerce.controller;
 
-import com.utc2.it.Ecommerce.dto.ProductVariationDto;
+import com.utc2.it.Ecommerce.dto.ColorSizeDto;
+import com.utc2.it.Ecommerce.dto.UserCartDto;
+import com.utc2.it.Ecommerce.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.utc2.it.Ecommerce.dto.CartDto;
 import com.utc2.it.Ecommerce.entity.ShoppingCartItem;
 import com.utc2.it.Ecommerce.service.RedisShoppingCartService;
 
@@ -16,25 +17,26 @@ import java.util.List;
 @RequestMapping("/api/user/cart")
 public class UCartController {
     private final RedisShoppingCartService redisShoppingCartService;
+    private final CartService cartService;
 
     @GetMapping("/count")
-    public ResponseEntity<Long>getCartCount(){
-        Long cartCount= redisShoppingCartService.getCartCount();
+    public ResponseEntity<Integer>getCartCount(){
+        Integer cartCount= cartService.getCartCount();
         return new ResponseEntity<>(cartCount,HttpStatus.OK);
     }
-    @PutMapping("/add")
-    public ResponseEntity<String>createCart(@RequestBody List<ProductVariationDto>productVariationDtos) throws Exception {
+    @PostMapping("/add")
+    public ResponseEntity<String>createCart(@RequestBody ColorSizeDto productVariationDtos) throws Exception {
         redisShoppingCartService.addToCart(productVariationDtos);
         return new ResponseEntity<>("Add successfully", HttpStatus.CREATED);
     }
-        @PutMapping("/remove/{productId}")
-    public ResponseEntity<String>removeCart(@PathVariable Long productId) throws Exception {
-       redisShoppingCartService.removeCart(productId);
-        return new ResponseEntity<>("Delete successfully",HttpStatus.CREATED);
+    @PostMapping("/remove")
+    public ResponseEntity<String>removeCart(@RequestBody ColorSizeDto productVariationDtos) throws Exception {
+        redisShoppingCartService.removeCart(productVariationDtos);
+        return new ResponseEntity<>("Remove successfully", HttpStatus.CREATED);
     }
     @GetMapping("/")
-    public ResponseEntity<List<ShoppingCartItem>>getUserCart() throws Exception {
-        List<ShoppingCartItem>userCartDtos= redisShoppingCartService.getUserCart();
+    public ResponseEntity<?>getUserCart() throws Exception {
+        List<UserCartDto>userCartDtos= cartService.getUserCart();
         return new ResponseEntity<>(userCartDtos,HttpStatus.OK);
     }
 }

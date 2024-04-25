@@ -19,6 +19,8 @@ public class CartDetail {
     private Long Id;
     private int quantity;
     private double price;
+    private Long idColor;
+    private Long idSize;
     private String color;
     private String size;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -2,10 +2,9 @@ package com.utc2.it.Ecommerce.service.implement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.utc2.it.Ecommerce.dto.ProductVariationDto;
+import com.utc2.it.Ecommerce.dto.ColorSizeDto;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
-import com.utc2.it.Ecommerce.service.ProductItemService;
 import com.utc2.it.Ecommerce.service.RedisShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.utc2.it.Ecommerce.dto.CartDto;
 import com.utc2.it.Ecommerce.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,148 +28,115 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     @Autowired
     private ObjectMapper objectMapper;
     private final UserRepository userRepository;
-    private final ProductItemService productItemService;
-    private final ProductRepository productRepository;
+    private final VariationOptionRepository variationOptionRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final ProductItemRepository productItemRepository;
     private static final String SHOPPING_CART_KEY_PREFIX = "shopping_cart:";
     private final CartDetailRepository cartDetailRepository;
     private ShoppingCart getCart(User user){
-        ShoppingCart shoppingCart=shoppingCartRepository.findShoppingCartByUser(user);
-        return shoppingCart;
+        return shoppingCartRepository.findShoppingCartByUser(user);
     }
     @Override
-    public void addToCart(List<ProductVariationDto>productVariationDtos) {
-        ProductItem productItem=productItemService.getProductItemByProductAndVarationOption(productVariationDtos);
+    public void addToCart(ColorSizeDto productVariationDtos) {
+        boolean check=false;
+       ProductItem productItem=productItemRepository.findByColorId(productVariationDtos.getIdColor());
+        VariationOption findBySize=variationOptionRepository.findById(productVariationDtos.getVariationOptionId()).orElseThrow();
+        VariationOption findByColor=variationOptionRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         ShoppingCart newShoppingCart = new ShoppingCart();
         String currentUsername = getCurrentUsername();
         User user = getUser(currentUsername);
-
         if (user == null) {
            throw new NotFoundException("User not found");
         }
-        String key = SHOPPING_CART_KEY_PREFIX + user.getId().toString();
+
         ShoppingCart checkShoppingCart = getCart(user);
         if (checkShoppingCart == null) {
             newShoppingCart.setUser(user);
             shoppingCartRepository.save(newShoppingCart);
         }
         else {
-
-
-            CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
-            if(cartDetail==null) {
-                CartDetail newCart= new CartDetail();
-                newCart.setQuantity(1);
-                newCart.setProductItem(productItem);
-                double totalPrice = productItem.getPrice() * 1;
-                newCart.setPrice(totalPrice);
-                newCart.setShopping_cart(checkShoppingCart);
-                CartDetail save= cartDetailRepository.save(newCart);
-                // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-                if (redisTemplate.opsForHash().hasKey(key, productItem.getId().toString())) {
-                    String existItemJSON = (String) redisTemplate.opsForHash().get(key, productItem.getId().toString());
-                    if (existItemJSON != null) {
-                        try {
-                            // Chuyển đổi chuỗi JSON thành đối tượng ShoppingCartItem
-                            ShoppingCartItem exist = objectMapper.readValue(existItemJSON, ShoppingCartItem.class);
-                            exist.setQuantity(exist.getQuantity() + 1);
-                            // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
-                            String updatedItemJSON = objectMapper.writeValueAsString(exist);
-                            redisTemplate.opsForHash().put(key, productItem.getId().toString(), updatedItemJSON);
-                        } catch (Exception e) {
-                            e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi khi chuyển đổi dữ liệu từ JSON thành đối tượng
-                        }
-                    }
-                } else {
-                    // Tạo mới đối tượng ShoppingCartItem
-                    ShoppingCartItem cartItem = new ShoppingCartItem();
-                    cartItem.setId(save.getId());
-                    ProductItem tamp=productItemRepository.findById(save.getProductItem().getId()).orElseThrow();
-                    Product product=productRepository.findById(tamp.getProduct().getId()).orElseThrow();
-                    cartItem.setProductName(product.getProductName());
-                    cartItem.setPrice(save.getPrice());
-                    cartItem.setUserId(user.getId());
-                    cartItem.setQuantity(1);
-                    cartItem.setProductId(productItem.getId());
-
-                    cartItem.setProductImageName(productItem.getProductItemImage());
-                    try {
-                        // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
-                        String cartItemJSON = objectMapper.writeValueAsString(cartItem);
-                        redisTemplate.opsForHash().put(key, product.getId().toString(), cartItemJSON);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi khi chuyển đổi đối tượng thành chuỗi JSON
-                    }
-                }
-            }
-            else {
-                cartDetail.setQuantity(cartDetail.getQuantity()+1);
-              CartDetail save=  cartDetailRepository.save(cartDetail);
-                // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-                if (redisTemplate.opsForHash().hasKey(key, productItem.getId().toString())) {
-                    String existItemJSON = (String) redisTemplate.opsForHash().get(key, productItem.getId().toString());
-                    if (existItemJSON != null) {
-                        try {
-                            // Chuyển đổi chuỗi JSON thành đối tượng ShoppingCartItem
-                            ShoppingCartItem exist = objectMapper.readValue(existItemJSON, ShoppingCartItem.class);
-                            exist.setQuantity(exist.getQuantity() + 1);
-                            // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
-                            String updatedItemJSON = objectMapper.writeValueAsString(exist);
-                            redisTemplate.opsForHash().put(key, productItem.getId().toString(), updatedItemJSON);
-                        } catch (Exception e) {
-                            e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi khi chuyển đổi dữ liệu từ JSON thành đối tượng
-                        }
-                    }
-                } else {
-                    // Tạo mới đối tượng ShoppingCartItem
-                    ShoppingCartItem cartItem = new ShoppingCartItem();
-                    cartItem.setId(save.getId());
-                    ProductItem tamp=productItemRepository.findById(save.getProductItem().getId()).orElseThrow();
-                    Product product=productRepository.findById(tamp.getProduct().getId()).orElseThrow();
-                    cartItem.setProductName(product.getProductName());
-                    cartItem.setPrice(save.getPrice());
-                    cartItem.setUserId(user.getId());
-                    cartItem.setQuantity(1);
-                    cartItem.setProductId(productItem.getId());
-                    cartItem.setProductImageName(productItem.getProductItemImage());
-                    try {
-                        // Chuyển đối tượng ShoppingCartItem thành chuỗi JSON trước khi lưu vào Redis
-                        String cartItemJSON = objectMapper.writeValueAsString(cartItem);
-                        redisTemplate.opsForHash().put(key, product.getId().toString(), cartItemJSON);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi khi chuyển đổi đối tượng thành chuỗi JSON
-                    }
-                }
-            }
+           List<CartDetail>  cartDetails = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
+              if (cartDetails == null) {
+                  CartDetail newCart = new CartDetail();
+                  newCart.setQuantity(productVariationDtos.getQuantity());
+                  newCart.setIdColor(findByColor.getId());
+                  newCart.setIdSize(findBySize.getId());
+                  newCart.setProductItem(productItem);
+                  newCart.setSize(findBySize.getValue());
+                  newCart.setColor(findByColor.getValue());
+                  double totalPrice = productItem.getPrice() * 1;
+                  newCart.setPrice(totalPrice);
+                  newCart.setShopping_cart(checkShoppingCart);
+                  CartDetail save = cartDetailRepository.save(newCart);
+              }
+              else {
+                  for(CartDetail cartDetail:cartDetails)
+                  {
+                      if(Objects.equals(cartDetail.getColor(), findByColor.getValue()) && Objects.equals(cartDetail.getSize(), findBySize.getValue()))
+                      {
+                          check=true;
+                          if (check) {
+                              cartDetail.setQuantity(cartDetail.getQuantity() + productVariationDtos.getQuantity());
+                              CartDetail save = cartDetailRepository.save(cartDetail);
+                          }
+                      }
+                  }
+                  if(!check){
+                          CartDetail newCart = new CartDetail();
+                          newCart.setQuantity(productVariationDtos.getQuantity());
+                          newCart.setIdColor(findByColor.getId());
+                          newCart.setIdSize(findBySize.getId());
+                          newCart.setProductItem(productItem);
+                          newCart.setSize(findBySize.getValue());
+                          newCart.setColor(findByColor.getValue());
+                          double totalPrice = productItem.getPrice() * 1;
+                          newCart.setPrice(totalPrice);
+                          newCart.setShopping_cart(checkShoppingCart);
+                          CartDetail save = cartDetailRepository.save(newCart);
+                  }
+              }
         }
     }
 
     @Override
-    public void removeCart(Long productId) {
-        String username = getCurrentUsername();
-        User user = getUser(username);
-        String key = SHOPPING_CART_KEY_PREFIX + user.getId();
-        if(redisTemplate.opsForHash().hasKey(key,productId.toString())){
-            String existItem=(String) redisTemplate.opsForHash().get(key,productId.toString());
-            if (existItem!=null){
-                try {
-                    ShoppingCartItem shoppingCartItem=objectMapper.readValue(existItem,ShoppingCartItem.class);
-                    if(shoppingCartItem.getQuantity()>1){
-                        shoppingCartItem.setQuantity(shoppingCartItem.getQuantity()-1);
-                            String updateShoppingJson=objectMapper.writeValueAsString(shoppingCartItem);
-                            redisTemplate.opsForHash().put(key,productId.toString(),updateShoppingJson);
-                    }
-                    else {
-                    redisTemplate.opsForHash().delete(key,productId.toString());
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
+    public void removeCart(ColorSizeDto productVariationDtos) {
+        boolean check=false;
+        ProductItem productItem=productItemRepository.findByColorId(productVariationDtos.getIdColor());
+        VariationOption findBySize=variationOptionRepository.findById(productVariationDtos.getVariationOptionId()).orElseThrow();
+        VariationOption findByColor=variationOptionRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
+        ShoppingCart newShoppingCart = new ShoppingCart();
+        String currentUsername = getCurrentUsername();
+        User user = getUser(currentUsername);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+        if(productItem==null){
+            throw  new NotFoundException("Product item not found");
+        }
+        ShoppingCart checkShoppingCart = getCart(user);
+        if (checkShoppingCart == null) {
+            newShoppingCart.setUser(user);
+            shoppingCartRepository.save(newShoppingCart);
         }
         else {
-            throw  new NotFoundException("Not found product in shopping_cart");
+            List<CartDetail>  cartDetails = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
+                for(CartDetail cartDetail:cartDetails)
+                {
+                    if(Objects.equals(cartDetail.getColor(), findByColor.getValue()) && Objects.equals(cartDetail.getSize(), findBySize.getValue()))
+                    {
+                        check=true;
+                        if (check) {
+                            if(cartDetail.getQuantity()>1){
+                                cartDetail.setQuantity(cartDetail.getQuantity() - 1);
+                                cartDetailRepository.save(cartDetail);
+                            }
+                            else {
+                                cartDetailRepository.delete(cartDetail);
+                            }
+                            // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+                        }
+                    }
+                }
         }
     }
     @Override

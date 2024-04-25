@@ -131,7 +131,7 @@ public class ProductItemServiceImpl implements ProductItemService {
     }
 
     @Override
-    public ProductItem getProductItemByProductAndVarationOption(List<ProductVariationDto> productVariationDtos) {
+    public ProductItem getProductItemByProductAndVarationOption(List<ColorSizeDto> productVariationDtos) {
 
 //        List<VariationOption>variationOptions= new LinkedList<>();
 //        Product product= new Product();

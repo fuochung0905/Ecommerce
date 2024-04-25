@@ -1,11 +1,9 @@
 package com.utc2.it.Ecommerce.service.implement;
 
-import com.utc2.it.Ecommerce.dto.ProductItemDto;
-import com.utc2.it.Ecommerce.dto.ProductVariationDto;
+import com.utc2.it.Ecommerce.dto.ColorSizeDto;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.CartService;
-import com.utc2.it.Ecommerce.service.ProductItemService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.utc2.it.Ecommerce.dto.CartDto;
 import com.utc2.it.Ecommerce.dto.UserCartDto;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +26,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final CartDetailRepository cartDetailRepository;
     private final ProductItemRepository productItemRepository;
-    private final ProductItemService productItemService;
+   private final VariationOptionRepository variationOptionRepository;
     @PersistenceContext
     private EntityManager entityManager;
     private User getUser(String username){
@@ -41,70 +37,8 @@ public class CartServiceImpl implements CartService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName(); // Trả về tên người dùng hiện đang đăng nhập
     }
-    public Integer AddItem(List<ProductVariationDto>productVariationDtos) throws Exception {
-        ProductItem productItem=productItemService.getProductItemByProductAndVarationOption(productVariationDtos);
-        ShoppingCart newShoppingCart = new ShoppingCart();
-        String currentUsername = getCurrentUsername();
-        User user = getUser(currentUsername);
-        if (user == null) {
-            return  0;
-        }
-        ShoppingCart checkShoppingCart = getCart(user);
-        if (checkShoppingCart == null) {
-            newShoppingCart.setUser(user);
-            shoppingCartRepository.save(newShoppingCart);
-        }
-        else {
-            CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
-            if(cartDetail==null) {
-                CartDetail newCart= new CartDetail();
-                newCart.setQuantity(1);
-                newCart.setProductItem(productItem);
-                double totalPrice = productItem.getPrice() * 1;
-                newCart.setPrice(totalPrice);
-                newCart.setShopping_cart(checkShoppingCart);
-                cartDetailRepository.save(newCart);
-                Integer carCount= cartDetailRepository.GetCartItemCount(user);
-                return carCount;
-            }
-            else {
-                cartDetail.setQuantity(cartDetail.getQuantity()+1);
-                cartDetailRepository.save(cartDetail);
-                Integer carCount= cartDetailRepository.GetCartItemCount(user);
-                return carCount;
-            }
-        }
 
-        return 0;
-    }
-    @Transactional
-    public Integer RemoveCartItem(Long productId) throws Exception {
-        String currentUsername = getCurrentUsername();
-        User user = getUser(currentUsername);
-        if (user == null) {
-            return 0;
-        }
-        ShoppingCart checkShoppingCart = getCart(user);
-        if (checkShoppingCart == null) {
-            return 0;
-        }
 
-        ProductItem productItem=productItemRepository.findById(productId).orElseThrow();
-        CartDetail cartDetail = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
-        if(cartDetail == null){
-            return 0;
-        }
-        else if (cartDetail.getQuantity()==1){
-            cartDetailRepository.delete(cartDetail);
-        }
-        else {
-            int quantity=cartDetail.getQuantity();
-            cartDetail.setQuantity(quantity-1);
-            cartDetailRepository.save(cartDetail);
-        }
-        Integer cartCount= cartDetailRepository.GetCartItemCount(user);
-        return cartCount;
-    }
 
     @Override
     public List<UserCartDto> getUserCart() throws Exception {
@@ -119,6 +53,8 @@ public class CartServiceImpl implements CartService {
             for (CartDetail cart: shoppingCart.getCartDetails()) {
                 UserCartDto userCartDto= new UserCartDto();
                 userCartDto.setId(cart.getId());
+                userCartDto.setIdColor(cart.getIdColor());
+                userCartDto.setIdSize(cart.getIdSize());
                 ProductItem productItem=productItemRepository.findById(cart.getProductItem().getId()).orElseThrow();
                 Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
                 userCartDto.setProductName(product.getProductName());

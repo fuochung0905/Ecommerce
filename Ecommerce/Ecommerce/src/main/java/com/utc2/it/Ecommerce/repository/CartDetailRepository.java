@@ -14,7 +14,7 @@ public interface CartDetailRepository extends JpaRepository<CartDetail,Long> {
     Integer GetCartItemCount(@Param("user")User user);
 
     @Query("select cd from CartDetail cd where cd.shopping_cart=:shoppingCart and cd.productItem=:productItem ")
-    CartDetail findCartDetailByShopping_cartAndProduct(@Param("shoppingCart") ShoppingCart shoppingCart
+    List<CartDetail> findCartDetailByShopping_cartAndProduct(@Param("shoppingCart") ShoppingCart shoppingCart
             ,@Param("productItem") ProductItem productItem);
 
 

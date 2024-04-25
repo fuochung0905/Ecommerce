@@ -14,5 +14,5 @@ public interface ProductItemService {
     List<ProductItemDto> getAllProductItemByProduct(Long productId);
     List<ProductItemDto> getAllProductItem();
     void saveProductItemImage(Long productItemId, String imageName);
-    ProductItem getProductItemByProductAndVarationOption(List<ProductVariationDto>productVariationDtos);
+    ProductItem getProductItemByProductAndVarationOption(List<ColorSizeDto>productVariationDtos);
 }

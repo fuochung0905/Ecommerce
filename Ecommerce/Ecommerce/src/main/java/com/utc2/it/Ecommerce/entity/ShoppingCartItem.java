@@ -21,6 +21,6 @@ public class ShoppingCartItem {
     private String color;
     private String productName;
     private double price;
-    private String productImageName;
+    private String image;
 }
 
