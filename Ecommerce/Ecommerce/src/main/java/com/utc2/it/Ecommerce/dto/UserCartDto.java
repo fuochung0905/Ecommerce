@@ -17,4 +17,8 @@ public class UserCartDto {
     private String size;
     private String productName;
     private String image;
+    private String addressUser;
+    private String username;
+    private String orderStatus;
+    private String orderDate;
 }

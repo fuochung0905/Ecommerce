@@ -29,12 +29,13 @@ public class Product {
     private  String description;
     private int quantity;
     private double price;
+    private double rate;
     @Column(name = "image_name")
     private String imageName;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductItem>productItems= new ArrayList<>();
-
-
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review>reviews= new ArrayList<>();
 }

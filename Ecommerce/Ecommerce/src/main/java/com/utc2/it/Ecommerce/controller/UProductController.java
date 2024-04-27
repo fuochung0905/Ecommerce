@@ -20,6 +20,11 @@ public class UProductController {
         List<ProductDto>productDtos=productService.getAllProduct();
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductDto>> getAllProductByCategory(@PathVariable Long categoryId){
+        List<ProductDto>productDtos=productService.getAllProductByCategory(categoryId);
+        return new ResponseEntity<>(productDtos, HttpStatus.OK);
+    }
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto>getProductById(@PathVariable Long productId){
         ProductDto productDto= productService.getProductById(productId);

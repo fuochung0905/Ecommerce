@@ -21,4 +21,5 @@ public interface ProductService {
     void saveProductImage(Long productId, String imageName);
     CurrentDetailProductDto getCurrentDetailProduct(Long productId);
     ProductDto getProductByIsColorAndByVariationOption(Long colorId,Long variationOptionId);
+    List<ProductDto>getAllProductByCategory(Long categoryId);
 }

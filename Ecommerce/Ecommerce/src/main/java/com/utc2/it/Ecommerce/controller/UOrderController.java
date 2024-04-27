@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.dto.OrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class UOrderController {
     @PostMapping("/createNewOrder")
     public ResponseEntity<OrderRequest>addOrder(@RequestBody OrderRequest request){
         OrderRequest result=orderService.userOrder(request);
+        if(result.getMessage()=="Order Successfully"){
+            return ResponseEntity.badRequest().body(result);
+        }
         return  new ResponseEntity<>(result, HttpStatus.CREATED);
     }
     @GetMapping("/history")
@@ -26,25 +30,30 @@ public class UOrderController {
         List<UserCartDto>result=orderService.historyOrdered();
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
+    @GetMapping("/historyOrdered")
+    public ResponseEntity<List<UserCartDto>>getOrderHistoryOrdered(){
+        List<UserCartDto>result=orderService.historyOrderedByOrdered();
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
 
     @GetMapping("/historyApproved")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryApproved(){
-        List<UserCartDto>result=orderService.historyOrdered();
+        List<UserCartDto>result=orderService.historyOrderApproved();
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyTransport")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryTransport(){
-        List<UserCartDto>result=orderService.historyOrdered();
+        List<UserCartDto>result=orderService.historyOrderTransport();
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyDelivered")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryDelivered(){
-        List<UserCartDto>result=orderService.historyOrdered();
+        List<UserCartDto>result=orderService.historyOrderDelivered();
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyCancel")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryCancel(){
-        List<UserCartDto>result=orderService.historyOrdered();
+        List<UserCartDto>result=orderService.historyOrderCancel();
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/currentAddress")

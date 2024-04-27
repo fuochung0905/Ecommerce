@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.dto.OrderDto;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.OrderService;
@@ -50,8 +51,7 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderStatus(OrderStatus.ordered);
             order.setCreateDate(LocalDateTime.now());
             order.setUpdateDate(LocalDateTime.now());
-            order.setApproved(true);
-
+            order.setOrdered(true);
             Order saveOrder=orderRepository.save(order);
             OrderDetail orderDetail= new OrderDetail();
             orderDetail.setOrder(order);
@@ -69,158 +69,162 @@ public class OrderServiceImpl implements OrderService {
                 product.setQyt_stock(product.getQyt_stock()-cartDetail.getQuantity());
                 ProductItem saveProduct=productItemRepository.save(product);
                 cartDetailRepository.delete(cartDetail);
-
                 orderRequest.setMessage("Order Successfully");
                 return orderRequest;
             }
-            orderRequest.setMessage("Order fail");
-            return orderRequest;
         }
         orderRequest.setMessage("user not address");
         return orderRequest;
     }
-
-
-
     @Override
     public List<UserCartDto> historyOrderApproved() {
         String username=getCurrentUsername();
         User user= getUser(username);
-        List<UserCartDto>userCartDtos= new ArrayList<>();
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderApproved(user,true);
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
-                    UserCartDto userCartDto= new UserCartDto();
+                    UserCartDto orderDto= new UserCartDto();
                     ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
-                    userCartDto.setProductName(product.getProductName());
-                    userCartDto.setSize(orderDetail.getSize());
-//
-                    userCartDto.setColor(orderDetail.getColor());
-                    userCartDto.setPrice(orderDetail.getPrice());
-                    userCartDto.setQuantity(orderDetail.getQuantity());
-                    userCartDto.setImage(productItem.getProductItemImage());
-                    userCartDtos.add(userCartDto);
-                }
-                else {
-                    return  null;
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setSize(orderDetail.getSize());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
                 }
             }
         }
-        return userCartDtos;
+        return userOrderDtos;
     }
 
     @Override
     public List<UserCartDto> historyOrderTransport() {
         String username=getCurrentUsername();
         User user= getUser(username);
-        List<UserCartDto>userCartDtos= new ArrayList<>();
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderTransport(user,true);
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
-                    UserCartDto userCartDto= new UserCartDto();
+                    UserCartDto orderDto= new UserCartDto();
                     ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
-                    userCartDto.setProductName(product.getProductName());
-                    userCartDto.setSize(orderDetail.getSize());
-                    userCartDto.setColor(orderDetail.getColor());
-                    userCartDto.setPrice(orderDetail.getPrice());
-                    userCartDto.setQuantity(orderDetail.getQuantity());
-                    userCartDto.setImage(productItem.getProductItemImage());
-                    userCartDtos.add(userCartDto);
-                }
-                else {
-                    return  null;
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
                 }
             }
         }
-        return userCartDtos;
+        return userOrderDtos;
     }
 
     @Override
     public List<UserCartDto> historyOrderDelivered() {
         String username=getCurrentUsername();
         User user= getUser(username);
-        List<UserCartDto>userCartDtos= new ArrayList<>();
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderDelivered(user,true);
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
-                    UserCartDto userCartDto= new UserCartDto();
+                    UserCartDto orderDto= new UserCartDto();
                     ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
-                    userCartDto.setProductName(product.getProductName());
-                    userCartDto.setSize(orderDetail.getSize());
-                    userCartDto.setColor(orderDetail.getColor());
-                    userCartDto.setPrice(orderDetail.getPrice());
-                    userCartDto.setQuantity(orderDetail.getQuantity());
-                    userCartDto.setImage(productItem.getProductItemImage());
-                    userCartDtos.add(userCartDto);
-                }
-                else {
-                    return  null;
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
                 }
             }
         }
-        return userCartDtos;
+        return userOrderDtos;
     }
 
     @Override
     public List<UserCartDto> historyOrderCancel() {
         String username=getCurrentUsername();
         User user= getUser(username);
-        List<UserCartDto>userCartDtos= new ArrayList<>();
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderCancel(user,true);
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
-                    UserCartDto userCartDto= new UserCartDto();
+                    UserCartDto orderDto= new UserCartDto();
                     ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
-                    userCartDto.setProductName(product.getProductName());
-                    userCartDto.setSize(orderDetail.getSize());
-                    userCartDto.setColor(orderDetail.getColor());
-                    userCartDto.setPrice(orderDetail.getPrice());
-                    userCartDto.setQuantity(orderDetail.getQuantity());
-                    userCartDto.setImage(productItem.getProductItemImage());
-                    userCartDtos.add(userCartDto);
-                }
-                else {
-                    return  null;
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
                 }
             }
         }
-        return userCartDtos;
+        return userOrderDtos;
+
     }
 
     @Override
     public List<UserCartDto> historyOrdered() {
         String username=getCurrentUsername();
         User user= getUser(username);
-        List<UserCartDto>userCartDtos= new ArrayList<>();
-        List<Order>orderList=orderRepository.findAllOrderByUserWithOrderSuccess(user,true);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderByUserWithOrderAll(user);
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
-                    UserCartDto userCartDto= new UserCartDto();
+                    UserCartDto orderDto= new UserCartDto();
                     ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
-                    userCartDto.setProductName(product.getProductName());
-                    userCartDto.setSize(orderDetail.getSize());
-                    userCartDto.setColor(orderDetail.getColor());
-                    userCartDto.setPrice(orderDetail.getPrice());
-                    userCartDto.setQuantity(orderDetail.getQuantity());
-                    userCartDto.setImage(productItem.getProductItemImage());
-                    userCartDtos.add(userCartDto);
-                }
-                else {
-                    return  null;
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
                 }
             }
         }
-        return userCartDtos;
+        return userOrderDtos;
     }
     @Override
     public AddressDto getAddressByUser() {
@@ -237,13 +241,226 @@ public class OrderServiceImpl implements OrderService {
             addressDto.setUserId(address.getUser().getId());
             return addressDto;
         }
-        throw  new NotFoundException("User does not have an address yet");
+       return null;
     }
 
-//    private ShoppingCart getCart(User user){
-//        ShoppingCart shoppingCart=shoppingCartRepository.findShoppingCartByUser(user);
-//        return shoppingCart;
-//    }
+    @Override
+    public List<UserCartDto> AhistoryOrdered() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderWithOrderAll();
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setId(order.getId());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
+    @Override
+    public List<UserCartDto> AhistoryOrderApproved() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderWithOrderApproved(true);
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setId(order.getId());
+                    orderDto.setSize(orderDetail.getSize());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
+    @Override
+    public List<UserCartDto> AhistoryOrderTransport() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderWithOrderTransport(true);
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setId(order.getId());;
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
+    @Override
+    public List<UserCartDto> AhistoryOrderDelivered() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderWithOrderDelivered(true);
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setId(order.getId());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
+    @Override
+    public List<UserCartDto> AhistoryOrderCancel() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderWithOrderCancel(true);
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setId(order.getId());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
+    @Override
+    public List<UserCartDto> AhistoryOrderedByOrdered() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderWithOrderBOrderByOrdered(true);
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setId(order.getId());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
+    @Override
+    public List<UserCartDto> historyOrderedByOrdered() {
+        String username=getCurrentUsername();
+        User user= getUser(username);
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+        List<Order>orderList=orderRepository.findAllOrderByUserWithOrderBOrderByOrdered(user,true);
+        for (Order order:orderList) {
+            for (OrderDetail orderDetail:order.getOrderDetails()) {
+                if(orderDetail!=null){
+                    UserCartDto orderDto= new UserCartDto();
+                    ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                    Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                    orderDto.setId(order.getId());
+                    orderDto.setProductName(product.getProductName());
+                    orderDto.setSize(orderDetail.getSize());
+                    orderDto.setImage(productItem.getProductItemImage());
+                    orderDto.setColor(orderDetail.getColor());
+                    User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setAddressUser(orderDetail.getAddressUser());
+                    orderDto.setPrice(orderDetail.getPrice());
+                    orderDto.setQuantity(orderDetail.getQuantity());
+                    orderDto.setOrderStatus(order.getOrderStatus().toString());
+                    orderDto.setOrderDate(order.getUpdateDate().toString());
+                    userOrderDtos.add(orderDto);
+                }
+            }
+        }
+        return userOrderDtos;
+    }
+
     private User getUser(String username){
         User user=userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         return user;

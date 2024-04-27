@@ -196,4 +196,23 @@ public class ProductServiceImpl implements ProductService {
         productDto.setImage(productItem.getProductItemImage());
         return productDto;
     }
+
+    @Override
+    public List<ProductDto> getAllProductByCategory(Long categoryId) {
+        Category category=categoryRepository.findById(categoryId).orElseThrow();
+       List<Product>products=productRepository.findAllByCategory(category);
+       List<ProductDto>productDtos=new LinkedList<>();
+       for (Product product:products) {
+           ProductDto dto= new ProductDto();
+           dto.setId(product.getId());
+           dto.setProductName(product.getProductName());
+           dto.setDescription(product.getDescription());
+           dto.setQuantity(product.getQuantity());
+           dto.setPrice(product.getPrice());
+           dto.setImage(product.getImageName());
+           productDtos.add(dto);
+
+       }
+       return productDtos;
+    }
 }

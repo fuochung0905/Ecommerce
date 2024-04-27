@@ -33,8 +33,10 @@ public class User implements UserDetails {
     private Role role;
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Address>addresses= new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review>reviews= new ArrayList<>();
 //    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
 //    private List<ShoppingCartItem>shoppingCartItems=new ArrayList<>() ;
     @Override

@@ -81,19 +81,9 @@ public class CartServiceImpl implements CartService {
         if (userName == null) {
             throw new Exception("Invalid user");
         }
-        ShoppingCart shoppingCart = entityManager.createQuery(
-                        "SELECT sc FROM ShoppingCart sc " +
-                                "JOIN FETCH sc.cartDetails cd " +
-                                "JOIN FETCH cd.productItem p " +
-                                "WHERE sc.user.email = :userName", ShoppingCart.class)
-                .setParameter("userName", userName)
-                .setMaxResults(1)
-                .getResultList()
-                .stream()
-                .findFirst()
-                .orElse(null);
+       ShoppingCart shoppingCart=shoppingCartRepository.findShoppingCartByUserWithProduct(userName);
         if (shoppingCart == null) {
-            throw new Exception("Shopping cart not found");
+            return null;
         }
         return shoppingCart;
     }

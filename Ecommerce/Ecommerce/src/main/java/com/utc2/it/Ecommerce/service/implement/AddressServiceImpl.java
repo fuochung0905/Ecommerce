@@ -61,7 +61,8 @@ public class AddressServiceImpl implements AddressService {
         User user=getUser(username);
         List<AddressDto>addressDtos= new ArrayList<>();
         List<Address>addresses=addressRepository.getListAddressByUser(user);
-
+        if(addresses.isEmpty())
+            return null;
         for (Address address:addresses) {
                 AddressDto dto=new AddressDto();
                 dto.setId(address.getId());

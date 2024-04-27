@@ -22,6 +22,9 @@ public class UAddressController {
     @GetMapping("/")
     public ResponseEntity<List<AddressDto>>getAllAddressByUser(){
         List<AddressDto>addressDtos=addressService.getAllAddress();
+        if(addressDtos==null){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(addressDtos,HttpStatus.OK);
     }
     @PostMapping("/updateIsDefine")
