@@ -73,6 +73,9 @@ public class AProductItemController {
     @GetMapping("/")
     public ResponseEntity<List<ProductItemDto>>getAllProductItem(){
         List<ProductItemDto>productItemDtos=productItemService.getAllProductItem();
+        if(productItemDtos==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(productItemDtos,HttpStatus.OK);
     }
 

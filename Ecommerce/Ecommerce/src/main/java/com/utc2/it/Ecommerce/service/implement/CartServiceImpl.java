@@ -67,7 +67,7 @@ public class CartServiceImpl implements CartService {
             }
             return userCartDtoS;
         }
-        throw new Exception("không tìm thấy giỏ hàng");
+       return null;
     }
     @Override
     public Integer getCartCount() {

@@ -54,6 +54,9 @@ public class AProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto>getProductById(@PathVariable Long productId){
         ProductDto productDto= productService.getProductById(productId);
+        if(productDto==null){
+            return ResponseEntity.notFound().build();
+        }
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
     @PostMapping("/updateProduct/{productId}")
@@ -69,6 +72,9 @@ public class AProductController {
     @GetMapping("/")
     public ResponseEntity<List<ProductDto>>getAllProduct(){
         List<ProductDto>productDtos=productService.getAllProduct();
+        if(productDtos==null){
+            return ResponseEntity.notFound().build();
+        }
         return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }
     @PutMapping("/addVariation")

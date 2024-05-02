@@ -22,6 +22,9 @@ public class UVariationController {
    @GetMapping("/product/{productId}")
     public ResponseEntity<?>getVariationByProduct(@PathVariable Long productId) {
        List<VariationDto>variationDtos=variationService.getVariationUserByProduct(productId);
+       if(variationDtos==null || variationDtos.size()==0){
+          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+       }
        return new ResponseEntity<>(variationDtos, HttpStatus.OK);
    }
 

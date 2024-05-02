@@ -28,37 +28,56 @@ public class UOrderController {
     @GetMapping("/history")
     public ResponseEntity<List<UserCartDto>>getOrderHistory(){
         List<UserCartDto>result=orderService.historyOrdered();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyOrdered")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryOrdered(){
         List<UserCartDto>result=orderService.historyOrderedByOrdered();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
     @GetMapping("/historyApproved")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryApproved(){
         List<UserCartDto>result=orderService.historyOrderApproved();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyTransport")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryTransport(){
         List<UserCartDto>result=orderService.historyOrderTransport();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyDelivered")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryDelivered(){
         List<UserCartDto>result=orderService.historyOrderDelivered();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyCancel")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryCancel(){
         List<UserCartDto>result=orderService.historyOrderCancel();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/currentAddress")
     public ResponseEntity<AddressDto>getAddressCurrentUser(){
         AddressDto addressDto=orderService.getAddressByUser();
+
         return new ResponseEntity<>(addressDto,HttpStatus.OK);
     }
 }

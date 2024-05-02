@@ -37,6 +37,9 @@ public class UCartController {
     @GetMapping("/")
     public ResponseEntity<?>getUserCart() throws Exception {
         List<UserCartDto>userCartDtos= cartService.getUserCart();
+        if (userCartDtos==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(userCartDtos,HttpStatus.OK);
     }
 }

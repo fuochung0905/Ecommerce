@@ -1,5 +1,7 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.entity.Product;
+import com.utc2.it.Ecommerce.exception.NotFoundException;
 import com.utc2.it.Ecommerce.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +43,9 @@ public class AuthServiceImpl implements AuthService {
         User user= new User();
         user.setEmail(signUp.getEmail());
         user.setFirstName(signUp.getFirstName());
+        user.setImage("avatar.jpg");
         user.setLastName(signUp.getLastName());
         user.setPassword(new BCryptPasswordEncoder().encode(signUp.getPassword()));
-        user.setPhoneNumber(signUp.getPhoneNumber());
         user.setRole(Role.User);
         authRepository.save(user);
         UserDto userDto= new UserDto();
@@ -51,9 +53,29 @@ public class AuthServiceImpl implements AuthService {
         userDto.setEmail(user.getEmail());
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
-        userDto.setPhoneNumber(user.getPhoneNumber());
+
         return userDto;
     }
+
+
+    @Override
+        public Long updateUser(SignUpRequest signUp)throws IOException {
+        String username = getCurrentUsername();
+        User user=getUser(username);
+        user.setPhoneNumber(signUp.getPhoneNumber());
+        user.setEmail(signUp.getEmail());
+        user.setFirstName(signUp.getFirstName());
+        user.setLastName(signUp.getLastName());
+        userRepository.save(user);
+        return user.getId();
+    }
+    @Override
+    public void saveUserImage(Long userId, String imageName) {
+        User user=userRepository.findById(userId).orElseThrow(()->new NotFoundException("Not found product "));
+        user.setImage(imageName);
+        userRepository.save(user);
+    }
+
     @Override
     public void signin(SignInRequest request, HttpServletResponse httpServletResponse) throws IOException, JSONException {
         UserDetails userDetails=userDetailService.userDetailsService().loadUserByUsername(request.getEmail());
@@ -81,6 +103,9 @@ public class AuthServiceImpl implements AuthService {
     public UserDto getCurrentUser() {
       String username=getCurrentUsername();
       User user=getUser(username);
+      if(user==null){
+          return null;
+      }
       UserDto userDto=new UserDto();
       userDto.setId(user.getId());
       userDto.setFirstName(user.getFirstName());
@@ -88,6 +113,7 @@ public class AuthServiceImpl implements AuthService {
       userDto.setEmail(user.getEmail());
       userDto.setPhoneNumber(user.getPhoneNumber());
       userDto.setRole(user.getRole().name());
+      userDto.setImage(user.getImage());
       return userDto;
 
     }

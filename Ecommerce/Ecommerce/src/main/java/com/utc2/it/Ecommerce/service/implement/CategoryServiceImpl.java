@@ -60,13 +60,19 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategory() {
       List<Category>categories=categoryRepository.findAll();
-      List<CategoryDto>categoryDtos= new LinkedList<>();
-        for (Category category: categories) {
-            CategoryDto dto = new CategoryDto();
-            dto.setId(category.getId());
-            dto.setName(category.getCategoryName());
-            categoryDtos.add(dto);
-        }
-        return categoryDtos;
+      if(categories!=null){
+          List<CategoryDto>categoryDtos= new LinkedList<>();
+          for (Category category: categories) {
+              CategoryDto dto = new CategoryDto();
+              dto.setId(category.getId());
+              dto.setName(category.getCategoryName());
+              categoryDtos.add(dto);
+          }
+          return categoryDtos;
+      }
+      else {
+          return null;
+      }
+
     }
 }

@@ -55,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
             Order saveOrder=orderRepository.save(order);
             OrderDetail orderDetail= new OrderDetail();
             orderDetail.setOrder(order);
+
             orderDetail.setAddressUser(address.getStreet()+" "+address.getState()+" "+address.getCity()+" "+address.getCountry());
             orderDetail.setProductItem(product);
             orderDetail.setPrice(cartDetail.getPrice());
@@ -82,6 +83,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderApproved(user,true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -92,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setSize(orderDetail.getSize());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setId(orderDetail.getId());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
@@ -112,6 +117,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderTransport(user,true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -120,6 +128,7 @@ public class OrderServiceImpl implements OrderService {
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
                     orderDto.setProductName(product.getProductName());
                     orderDto.setSize(orderDetail.getSize());
+                    orderDto.setId(orderDetail.getId());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
@@ -142,6 +151,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderDelivered(user,true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -154,6 +166,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setId(orderDetail.getId());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
@@ -172,6 +185,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderCancel(user,true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -186,6 +202,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setQuantity(orderDetail.getQuantity());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setId(orderDetail.getId());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setOrderStatus(order.getOrderStatus().toString());
                     orderDto.setOrderDate(order.getUpdateDate().toString());
@@ -203,6 +220,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderAll(user);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -213,6 +233,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
+                    orderDto.setId(orderDetail.getId());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
@@ -250,6 +271,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderWithOrderAll();
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -265,6 +289,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
+
                     orderDto.setQuantity(orderDetail.getQuantity());
                     orderDto.setOrderStatus(order.getOrderStatus().toString());
                     orderDto.setOrderDate(order.getUpdateDate().toString());
@@ -281,6 +306,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderWithOrderApproved(true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -293,6 +321,7 @@ public class OrderServiceImpl implements OrderService {
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
+
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setPrice(orderDetail.getPrice());
@@ -312,6 +341,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderWithOrderTransport(true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -322,6 +354,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setId(order.getId());;
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
+
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
@@ -343,6 +376,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderWithOrderDelivered(true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -352,6 +388,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setProductName(product.getProductName());
                     orderDto.setId(order.getId());
                     orderDto.setSize(orderDetail.getSize());
+
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
@@ -374,6 +411,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderWithOrderCancel(true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -383,6 +423,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setProductName(product.getProductName());
                     orderDto.setId(order.getId());
                     orderDto.setSize(orderDetail.getSize());
+
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setPrice(orderDetail.getPrice());
@@ -405,6 +446,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderWithOrderBOrderByOrdered(true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){
@@ -416,6 +460,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
+
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
@@ -436,6 +481,9 @@ public class OrderServiceImpl implements OrderService {
         User user= getUser(username);
         List<UserCartDto>userOrderDtos= new ArrayList<>();
         List<Order>orderList=orderRepository.findAllOrderByUserWithOrderBOrderByOrdered(user,true);
+        if(orderList==null|| orderList.isEmpty()){
+            return null;
+        }
         for (Order order:orderList) {
             for (OrderDetail orderDetail:order.getOrderDetails()) {
                 if(orderDetail!=null){

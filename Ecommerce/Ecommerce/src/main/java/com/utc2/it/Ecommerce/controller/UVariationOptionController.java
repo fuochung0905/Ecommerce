@@ -24,11 +24,17 @@ public class UVariationOptionController {
     @GetMapping("/product/{productId}")
     public ResponseEntity<?> getColorProductItem(@PathVariable Long productId) {
         List<VariationOptionDto>variationOptionDtos=variationOptionService.getAllVariationOptionWithByProduct(productId);
+        if(variationOptionDtos==null||variationOptionDtos.size()==0){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(variationOptionDtos, HttpStatus.OK);
     }
     @GetMapping("/")
     public ResponseEntity<?>getAllVariationOptions() {
         List<VariationOptionDto>variationOptionDtos=variationOptionService.getAllVariation();
+        if(variationOptionDtos==null||variationOptionDtos.size()==0){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(variationOptionDtos, HttpStatus.OK);
     }
 }

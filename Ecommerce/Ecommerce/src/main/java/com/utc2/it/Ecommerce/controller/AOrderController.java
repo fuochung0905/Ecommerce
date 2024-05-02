@@ -19,32 +19,50 @@ public class AOrderController {
     @GetMapping("/history")
     public ResponseEntity<List<UserCartDto>> getOrderHistory(){
         List<UserCartDto>result=orderService.AhistoryOrdered();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @GetMapping("/historyOrdered")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryOrdered(){
         List<UserCartDto>result=orderService.AhistoryOrderedByOrdered();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
     @GetMapping("/historyApproved")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryApproved(){
         List<UserCartDto>result=orderService.AhistoryOrderApproved();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyTransport")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryTransport(){
         List<UserCartDto>result=orderService.AhistoryOrderTransport();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyDelivered")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryDelivered(){
         List<UserCartDto>result=orderService.AhistoryOrderDelivered();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @GetMapping("/historyCancel")
     public ResponseEntity<List<UserCartDto>>getOrderHistoryCancel(){
         List<UserCartDto>result=orderService.AhistoryOrderCancel();
+        if(result==null){
+            return ResponseEntity.noContent().build();
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

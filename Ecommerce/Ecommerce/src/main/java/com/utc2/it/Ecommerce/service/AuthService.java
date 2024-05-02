@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public interface AuthService {
     UserDto CreateUser(SignUpRequest signUp);
+    void saveUserImage(Long userId, String imageName);
+    Long updateUser(SignUpRequest userUpdate)throws IOException;
     void signin(SignInRequest request, HttpServletResponse httpServletResponse) throws IOException, JSONException;
     UserDto getCurrentUser();
 }

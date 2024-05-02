@@ -20,6 +20,7 @@ public class Review {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    private String variation;
     private int rating;
     @Column(columnDefinition = "TEXT")
     private  String comment;

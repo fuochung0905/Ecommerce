@@ -2,10 +2,7 @@ package com.utc2.it.Ecommerce.service.implement;
 
 import com.utc2.it.Ecommerce.dto.ReviewDto;
 import com.utc2.it.Ecommerce.entity.*;
-import com.utc2.it.Ecommerce.repository.OrderRepository;
-import com.utc2.it.Ecommerce.repository.ProductRepository;
-import com.utc2.it.Ecommerce.repository.ReviewsRepository;
-import com.utc2.it.Ecommerce.repository.UserRepository;
+import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +21,7 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
     private final ReviewsRepository reviewsRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
@@ -36,7 +35,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
     @Override
     public ReviewDto createReview(ReviewDto reviewDto) {
-        Product product = productRepository.findById(reviewDto.getProductId()).orElseThrow();
+        OrderDetail findorderDetail=orderDetailRepository.findById(reviewDto.getOrderId()).orElseThrow();
+        ProductItem productItem = findorderDetail.getProductItem();
+        Product product=productItem.getProduct();
        String username = getCurrentUsername();
        User user = getUser(username);
         List<Order> orders=orderRepository.findAllOrderByUserWithOrderDelivered(user,true);
@@ -46,6 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
                     Review review=new Review();
                     review.setProduct(product);
                     review.setUser(user);
+                    review.setVariation(orderDetail.getSize()+" "+orderDetail.getColor());
                     review.setComment(reviewDto.getComment());
                     review.setRating(reviewDto.getRating());
                     LocalDateTime currentTime = LocalDateTime.now();
@@ -53,8 +55,9 @@ public class ReviewServiceImpl implements ReviewService {
                     Review save=reviewsRepository.save(review);
                     ReviewDto dto=new ReviewDto();
                     dto.setComment(save.getComment());
+                    dto.setVariation(review.getVariation());
                     dto.setRating(save.getRating());
-                    dto.setDate(save.getDate());
+                    dto.setDate(save.getDate().toString());
                     dto.setProductId(product.getId());
                     dto.setUserId(save.getUser().getId());
                     return dto;
@@ -67,5 +70,28 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public String deleteReview(Long reviewId) {
         return "";
+    }
+
+    @Override
+    public List<ReviewDto> getAllReviewsByProductId(Long productId) {
+       List<Review> reviews=reviewsRepository.findAllByProductId(productId);
+       List<ReviewDto> dtos=new ArrayList<>();
+       for(Review review:reviews){
+           Product product=productRepository.findById(review.getProduct().getId()).orElseThrow();
+           User user=userRepository.findById(review.getUser().getId()).orElseThrow();
+           ReviewDto dto=new ReviewDto();
+           dto.setUsername(user.getUsername());
+           dto.setProductName(product.getProductName());
+           dto.setImageName(product.getImageName());
+           dto.setComment(review.getComment());
+           dto.setImageUser(user.getImage());
+           dto.setVariation(review.getVariation());
+           dto.setRating(review.getRating());
+           dto.setDate(review.getDate().toString());
+           dto.setProductId(review.getProduct().getId());
+           dto.setUserId(review.getUser().getId());
+           dtos.add(dto);
+       }
+       return dtos;
     }
 }

@@ -12,9 +12,15 @@ import java.util.Date;
 @AllArgsConstructor
 public class ReviewDto {
     private Long id;
+    private Long orderId;
     private String comment;
     private int rating;
-    private LocalDateTime date;
+    private String variation;
+    private String date;
     private Long productId;
     private Long userId;
+    private String imageUser;
+    private String productName;
+    private String imageName;
+    private String username;
 }

@@ -20,11 +20,17 @@ public class UProductItemController {
     @GetMapping("/product/{productId}")
     public ResponseEntity<?> getProductItem(@PathVariable Long productId) {
         List<ProductItemDto>productItemDtos=productItemService.getAllProductItemByProduct(productId);
+        if(productItemDtos.size()==0||productItemDtos==null){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(productItemDtos);
     }
     @GetMapping("/{productItemId}")
     public ResponseEntity<?> getProductItemById(@PathVariable Long productItemId) {
         ProductDto productItemDto=productItemService.getProductItemById(productItemId);
+        if(productItemDto==null){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(productItemDto);
     }
 }

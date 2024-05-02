@@ -73,6 +73,9 @@ public class ProductItemServiceImpl implements ProductItemService {
     @Override
     public ProductDto getProductItemById(Long productItemId) {
         ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
+        if(productItem==null){
+            return null;
+        }
         ProductDto dto= new ProductDto();
         dto.setId(productItem.getId());
         dto.setQuantity(productItem.getQyt_stock());
@@ -93,6 +96,9 @@ public class ProductItemServiceImpl implements ProductItemService {
     public List<ProductItemDto> getAllProductItemByProduct(Long productId) {
         Product product=productRepository.findById(productId).orElseThrow();
         List<ProductItem> productItems=product.getProductItems();
+        if(productItems==null){
+            return null;
+        }
         List<ProductItemDto>productItemDtos=new ArrayList<>();
         for (ProductItem productItem:productItems) {
             ProductItemDto productItemDto= new ProductItemDto();
@@ -111,6 +117,9 @@ public class ProductItemServiceImpl implements ProductItemService {
     public List<ProductItemDto> getAllProductItem() {
         List<ProductItem>productItems= productItemRepository.findAll();
         List<ProductItemDto>productItemDtos= new LinkedList<>();
+        if(productItems==null){
+            return null;
+        }
         for (ProductItem item:productItems) {
             ProductItemDto dto= new ProductItemDto();
             dto.setProductId(item.getId());

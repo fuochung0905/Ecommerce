@@ -23,16 +23,25 @@ public class UProductController {
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductDto>> getAllProductByCategory(@PathVariable Long categoryId){
         List<ProductDto>productDtos=productService.getAllProductByCategory(categoryId);
+        if(productDtos.size()==0||productDtos==null){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto>getProductById(@PathVariable Long productId){
         ProductDto productDto= productService.getProductById(productId);
+        if(productDto==null){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
     @GetMapping("variationOption/{variationOptionId}/{colorId}")
     public ResponseEntity<?>getProductClickColor(@PathVariable Long colorId,@PathVariable Long variationOptionId){
         ProductDto productDtos=productService.getProductByIsColorAndByVariationOption(colorId,variationOptionId);
+        if(productDtos==null){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }
 }

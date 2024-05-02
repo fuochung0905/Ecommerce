@@ -19,6 +19,9 @@ public class AProductItemVariationOptionController {
     @GetMapping("/productItem/{productItemId}")
     public ResponseEntity<?> getProductItemVariationOption(@PathVariable Long productItemId) {
         List<ProductItemVariationOptionDto>productItemVariationOptionDtos=productItemVariationOptionService.getAllProductItemVariationOptionsByProductItem(productItemId);
+        if(productItemVariationOptionDtos==null || productItemVariationOptionDtos.size()==0){
+            return ResponseEntity.notFound().build();
+        }
         return  ResponseEntity.ok(productItemVariationOptionDtos);
     }
     @DeleteMapping("/{productItemVariationId}")

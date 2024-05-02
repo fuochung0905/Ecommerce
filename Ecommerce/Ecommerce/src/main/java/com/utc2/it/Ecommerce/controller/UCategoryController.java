@@ -18,6 +18,9 @@ public class UCategoryController {
     @GetMapping("/")
     public ResponseEntity<?> getCategory() {
         List<CategoryDto>categoryDtos=categoryService.getAllCategory();
+        if(categoryDtos==null || categoryDtos.size()==0){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(categoryDtos);
     }
 }

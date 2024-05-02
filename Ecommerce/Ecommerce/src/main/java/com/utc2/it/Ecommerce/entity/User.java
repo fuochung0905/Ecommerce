@@ -29,6 +29,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String phoneNumber;
+    private String image;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user")
@@ -37,8 +38,7 @@ public class User implements UserDetails {
     List<Address>addresses= new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review>reviews= new ArrayList<>();
-//    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-//    private List<ShoppingCartItem>shoppingCartItems=new ArrayList<>() ;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

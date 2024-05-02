@@ -111,47 +111,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto addVariationForProduct(ProductItemVariationDto productVariationDto) {
-//        Set<VariationOption>variationSet=null;
-//        Product product=productRepository.findById(productVariationDto.getProductId()).orElseThrow(()->new ResourceNotFoundException("product","productId", productVariationDto.getProductId()));
-//        VariationOption variation=variationRepository.findById(productVariationDto.getVariationId()).orElseThrow(()->new ResourceNotFoundException("variation","variationId", productVariationDto.getVariationId()));
-//        variationSet=product.getVariations();
-//        variationSet.add(variation);
-//        product.setVariations(variationSet);
-//        Product saveProduct=productRepository.save(product);
-//        ProductDto productDto=new ProductDto();
-//        productDto.setProductName(saveProduct.getProductName());
-//        productDto.setDescription(saveProduct.getDescription());
-//        productDto.setQuantity(saveProduct.getQuantity());
-//        productDto.setExportPrice(saveProduct.getExportPrice());
-//        productDto.setImportPrice(saveProduct.getImportPrice());
-//
-//        productDto.setCategoryId(saveProduct.getCategory().getId());
-//        return productDto;
         return null;
 
     }
 
     @Override
     public ProductDto removeVariationForProduct(ProductItemVariationDto productVariationDto) {
-//        Set<VariationOption>variationSet=null;
-//        Product product=productRepository.findById(productVariationDto.getProductId()).orElseThrow(()->new ResourceNotFoundException("product","productId", productVariationDto.getProductId()));
-//        VariationOption variation=variationRepository.findById(productVariationDto.getVariationId()).orElseThrow(()->new ResourceNotFoundException("variation","variationId", productVariationDto.getVariationId()));
-//        variationSet=product.getVariations();
-//        for (VariationOption vari:variationSet) {
-//            if(vari==variation){
-//                variationSet.remove(vari);
-//            }
-//        }
-//        product.setVariations(variationSet);
-//        Product saveProduct=productRepository.save(product);
-//        ProductDto productDto=new ProductDto();
-//        productDto.setProductName(saveProduct.getProductName());
-//        productDto.setDescription(saveProduct.getDescription());
-//        productDto.setQuantity(saveProduct.getQuantity());
-//        productDto.setExportPrice(saveProduct.getExportPrice());
-//        productDto.setImportPrice(saveProduct.getImportPrice());
-//        productDto.setCategoryId(saveProduct.getCategory().getId());
-//        return productDto;
         return null;
     }
 

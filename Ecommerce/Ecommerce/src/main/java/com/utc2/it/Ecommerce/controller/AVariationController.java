@@ -33,21 +33,33 @@ public class AVariationController {
     @GetMapping("/{variationId}")
     public ResponseEntity<?>getVariationById(@PathVariable Long variationId){
         VariationDto variationDto=variationService.getVariationById(variationId);
+        if(variationDto==null){
+            return new ResponseEntity<>(new VariationDto(),HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(variationDto,HttpStatus.OK);
     }
     @GetMapping("/")
     public ResponseEntity<List<VariationDto>>getAllVariation(){
         List<VariationDto>variationDtos=variationService.getAllVariation();
+        if(variationDtos==null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(variationDtos,HttpStatus.OK);
     }
    @GetMapping("/product/{productId}")
     public ResponseEntity<?>getAllVariationByProduct(@PathVariable Long productId){
         List<VariationDto>variationDtos=variationService.getVariationByProduct(productId);
+        if (variationDtos==null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(variationDtos,HttpStatus.OK);
    }
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<?>getAllVariationByCategory(@PathVariable Long categoryId){
         List<VariationDto>variationDtos=variationService.getVariationByProduct(categoryId);
+        if (variationDtos==null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(variationDtos,HttpStatus.OK);
     }
 }
