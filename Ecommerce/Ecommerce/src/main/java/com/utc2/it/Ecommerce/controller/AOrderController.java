@@ -1,13 +1,12 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.dto.OrderedRequest;
 import com.utc2.it.Ecommerce.dto.UserCartDto;
 import com.utc2.it.Ecommerce.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,6 +62,21 @@ public class AOrderController {
         if(result==null){
             return ResponseEntity.noContent().build();
         }
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @PostMapping("/orderedToApproval")
+    public ResponseEntity<String> orderToApproval(@RequestBody OrderedRequest orderedRequest){
+        String result=orderService.OrderedToApproval(orderedRequest);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @PostMapping("/approvalToTransport")
+    public ResponseEntity<String> approvalToTransport(@RequestBody OrderedRequest orderedRequest){
+        String result=orderService.ApprovalToTransport(orderedRequest);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @PostMapping("/transportToDelivered")
+    public ResponseEntity<String> transportToDelivered(@RequestBody OrderedRequest orderedRequest){
+        String result=orderService.TransportToDelivered(orderedRequest);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

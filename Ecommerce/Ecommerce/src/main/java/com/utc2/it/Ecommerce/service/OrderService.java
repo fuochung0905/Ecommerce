@@ -1,8 +1,6 @@
 package com.utc2.it.Ecommerce.service;
-import com.utc2.it.Ecommerce.dto.AddressDto;
-import com.utc2.it.Ecommerce.dto.OrderDto;
-import com.utc2.it.Ecommerce.dto.OrderRequest;
-import com.utc2.it.Ecommerce.dto.UserCartDto;
+import com.utc2.it.Ecommerce.dto.*;
+
 import java.util.List;
 
 public interface OrderService {
@@ -21,6 +19,10 @@ public interface OrderService {
     List<UserCartDto> AhistoryOrderDelivered();
     List<UserCartDto> AhistoryOrderCancel();
     List<UserCartDto> AhistoryOrderedByOrdered();
+    String OrderedToApproval(OrderedRequest orderRequest);
+    String ApprovalToTransport(OrderedRequest orderRequest);
+    String TransportToDelivered(OrderedRequest orderRequest);
+
 
 
 

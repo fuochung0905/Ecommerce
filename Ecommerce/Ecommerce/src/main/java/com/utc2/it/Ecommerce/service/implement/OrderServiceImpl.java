@@ -1,6 +1,6 @@
 package com.utc2.it.Ecommerce.service.implement;
 
-import com.utc2.it.Ecommerce.dto.OrderDto;
+import com.utc2.it.Ecommerce.dto.*;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.OrderService;
@@ -10,9 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.utc2.it.Ecommerce.dto.AddressDto;
-import com.utc2.it.Ecommerce.dto.OrderRequest;
-import com.utc2.it.Ecommerce.dto.UserCartDto;
 import com.utc2.it.Ecommerce.exception.NotFoundException;
 
 
@@ -473,6 +470,39 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return userOrderDtos;
+    }
+
+    @Override
+    public String OrderedToApproval(OrderedRequest orderRequest) {
+        OrderDetail orderDetail=orderDetailRepository.findById(orderRequest.getId()).orElseThrow();
+        Order order=orderDetail.getOrder();
+        order.setApproved(true);
+        order.setOrdered(false);
+        order.setOrderStatus(OrderStatus.approved);
+        orderRepository.save(order);
+        return "Approved";
+    }
+
+    @Override
+    public String ApprovalToTransport(OrderedRequest orderRequest) {
+        OrderDetail orderDetail=orderDetailRepository.findById(orderRequest.getId()).orElseThrow();
+        Order order=orderDetail.getOrder();
+        order.setApproved(false);
+        order.setTransport(true);
+        order.setOrderStatus(OrderStatus.transport);
+        orderRepository.save(order);
+        return "Transport";
+    }
+
+    @Override
+    public String TransportToDelivered(OrderedRequest orderRequest) {
+        OrderDetail orderDetail=orderDetailRepository.findById(orderRequest.getId()).orElseThrow();
+        Order order=orderDetail.getOrder();
+        order.setDelivered(true);
+        order.setTransport(false);
+        order.setOrderStatus(OrderStatus.delivered);
+        orderRepository.save(order);
+        return "Delivered";
     }
 
     @Override
