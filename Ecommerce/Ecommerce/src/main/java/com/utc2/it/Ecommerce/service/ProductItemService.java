@@ -10,6 +10,7 @@ public interface ProductItemService {
      void addVariationOptionToProductItem(ProductItemVariationDto productItemVariationDto);
     ProductItemDto updateProductItem(Long productItemId, ProductItemDto productItemDto) throws IOException;
     ProductDto getProductItemById(Long productItemId);
+    ProductDto getProductItemByIsColor(Long productItemId,Long idColor);
     void deleteProductItemById(Long productItemId);
     List<ProductItemDto> getAllProductItemByProduct(Long productId);
     List<ProductItemDto> getAllProductItem();

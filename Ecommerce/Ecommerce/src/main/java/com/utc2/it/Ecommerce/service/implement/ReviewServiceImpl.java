@@ -2,6 +2,7 @@ package com.utc2.it.Ecommerce.service.implement;
 
 import com.utc2.it.Ecommerce.dto.ReviewDto;
 import com.utc2.it.Ecommerce.entity.*;
+import com.utc2.it.Ecommerce.exception.NotFoundException;
 import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
         return authentication.getName(); // Trả về tên người dùng hiện đang đăng nhập
     }
     @Override
-    public ReviewDto createReview(ReviewDto reviewDto) {
+    public Long createReview(ReviewDto reviewDto) {
         OrderDetail findorderDetail=orderDetailRepository.findById(reviewDto.getOrderId()).orElseThrow();
         ProductItem productItem = findorderDetail.getProductItem();
         Product product=productItem.getProduct();
@@ -60,11 +61,18 @@ public class ReviewServiceImpl implements ReviewService {
                     dto.setDate(save.getDate().toString());
                     dto.setProductId(product.getId());
                     dto.setUserId(save.getUser().getId());
-                    return dto;
+                    return save.getId();
                 }
             }
         }
        return null;
+    }
+
+    @Override
+    public void saveReviewImage(Long reviewId, String imageName) {
+        Review review=reviewsRepository.findById(reviewId).orElseThrow(()->new NotFoundException("Not found review "));
+        review.setImage(imageName);
+        reviewsRepository.save(review);
     }
 
     @Override
@@ -87,6 +95,7 @@ public class ReviewServiceImpl implements ReviewService {
            dto.setImageUser(user.getImage());
            dto.setVariation(review.getVariation());
            dto.setRating(review.getRating());
+           dto.setImageReview(review.getImage());
            dto.setDate(review.getDate().toString());
            dto.setProductId(review.getProduct().getId());
            dto.setUserId(review.getUser().getId());

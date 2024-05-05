@@ -39,7 +39,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     @Override
     public void addToCart(ColorSizeDto productVariationDtos) {
         boolean check=false;
-       ProductItem productItem=productItemRepository.findByColorId(productVariationDtos.getIdColor());
+       ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         VariationOption findBySize=variationOptionRepository.findById(productVariationDtos.getVariationOptionId()).orElseThrow();
         VariationOption findByColor=variationOptionRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         ShoppingCart newShoppingCart = new ShoppingCart();
@@ -101,7 +101,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     @Override
     public void removeCart(ColorSizeDto productVariationDtos) {
         boolean check=false;
-        ProductItem productItem=productItemRepository.findByColorId(productVariationDtos.getIdColor());
+        ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         VariationOption findBySize=variationOptionRepository.findById(productVariationDtos.getVariationOptionId()).orElseThrow();
         VariationOption findByColor=variationOptionRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         ShoppingCart newShoppingCart = new ShoppingCart();

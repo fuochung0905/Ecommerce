@@ -86,6 +86,11 @@ public class ProductItemServiceImpl implements ProductItemService {
     }
 
     @Override
+    public ProductDto getProductItemByIsColor(Long productItemId, Long idColor) {
+        return null;
+    }
+
+    @Override
     public void deleteProductItemById(Long productItemId) {
         ProductItem deleteProductItem= productItemRepository.findById(productItemId).orElseThrow();
         productItemRepository.delete(deleteProductItem);

@@ -36,7 +36,7 @@ public class UProductController {
         }
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
-    @GetMapping("variationOption/{variationOptionId}/{colorId}")
+    @GetMapping("/variationOption/{variationOptionId}/{colorId}")
     public ResponseEntity<?>getProductClickColor(@PathVariable Long colorId,@PathVariable Long variationOptionId){
         ProductDto productDtos=productService.getProductByIsColorAndByVariationOption(colorId,variationOptionId);
         if(productDtos==null){

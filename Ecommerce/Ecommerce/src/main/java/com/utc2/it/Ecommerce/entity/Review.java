@@ -21,10 +21,11 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private String variation;
-    private int rating;
+    private Integer rating;
     @Column(columnDefinition = "TEXT")
     private  String comment;
     private LocalDateTime date;
+    private String image;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
     @ManyToOne(fetch = FetchType.LAZY)

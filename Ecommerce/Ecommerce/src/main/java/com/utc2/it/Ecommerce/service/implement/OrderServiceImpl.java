@@ -506,6 +506,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Double getTotalAmountByUser(Long userId) {
+        User user=userRepository.findById(userId).orElseThrow();
+        Double totalAmount=orderRepository.getTotalAmount(user);
+        return totalAmount;
+    }
+
+    @Override
     public List<UserCartDto> historyOrderedByOrdered() {
         String username=getCurrentUsername();
         User user= getUser(username);

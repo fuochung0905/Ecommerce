@@ -79,4 +79,9 @@ public class AOrderController {
         String result=orderService.TransportToDelivered(orderedRequest);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
+    @GetMapping("/totalAmount/user/{userId}")
+    public  ResponseEntity<Double> getTotalAmount(@PathVariable Long userId){
+        Double totalAmount=orderService.getTotalAmountByUser(userId);
+        return new ResponseEntity<>(totalAmount,HttpStatus.OK);
+    }
 }

@@ -146,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductByIsColorAndByVariationOption(Long colorId,Long variationOptionId) {
-        ProductItem productItem=productItemRepository.findByColorId(colorId);
+        ProductItem productItem=productItemRepository.findById(colorId).orElseThrow();
         VariationOption variationOption=variationOptionRepository.findById(variationOptionId).orElseThrow();
         ProductItemVariationOption productItemVariationOption=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(productItem,variationOption);
         ProductDto productDto= new ProductDto();

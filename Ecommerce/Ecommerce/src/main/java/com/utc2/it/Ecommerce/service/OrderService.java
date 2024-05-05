@@ -22,6 +22,7 @@ public interface OrderService {
     String OrderedToApproval(OrderedRequest orderRequest);
     String ApprovalToTransport(OrderedRequest orderRequest);
     String TransportToDelivered(OrderedRequest orderRequest);
+    Double getTotalAmountByUser(Long userId);
 
 
 

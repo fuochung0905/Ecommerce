@@ -37,4 +37,8 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     List<Order> findAllOrderWithOrderDelivered(@Param("active")Boolean active);
     @Query("select o from Order o join fetch o.orderDetails od join fetch od.productItem where  o.isCancel=:active")
     List<Order> findAllOrderWithOrderCancel(@Param("active")Boolean active);
+
+
+    @Query("select sum(o.totalPrice) from Order o where o.user=:user")
+    Double getTotalAmount(@Param("user")User user);
 }
