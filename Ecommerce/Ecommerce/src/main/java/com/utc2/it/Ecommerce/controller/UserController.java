@@ -2,6 +2,7 @@ package com.utc2.it.Ecommerce.controller;
 
 import com.utc2.it.Ecommerce.dto.ProductDto;
 import com.utc2.it.Ecommerce.dto.SignUpRequest;
+import com.utc2.it.Ecommerce.dto.UserDto;
 import com.utc2.it.Ecommerce.entity.User;
 import com.utc2.it.Ecommerce.repository.UserRepository;
 import com.utc2.it.Ecommerce.service.AuthService;
@@ -38,6 +39,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName(); // Trả về tên người dùng hiện đang đăng nhập
     }
+
     @PostMapping("/")
     public ResponseEntity<?>updateUser(@RequestBody SignUpRequest signUpRequest) throws IOException {
         Long result= authService.updateUser(signUpRequest);

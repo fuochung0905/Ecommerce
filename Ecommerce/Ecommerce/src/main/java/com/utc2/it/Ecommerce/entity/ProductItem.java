@@ -19,8 +19,6 @@ public class ProductItem {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-
-
     private int qyt_stock;
     private Long idColor;
     private String productItemImage;

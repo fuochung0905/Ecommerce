@@ -56,7 +56,7 @@ public class AVariationController {
    }
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<?>getAllVariationByCategory(@PathVariable Long categoryId){
-        List<VariationDto>variationDtos=variationService.getVariationByProduct(categoryId);
+        List<VariationDto>variationDtos=variationService.getVariationCategory(categoryId);
         if (variationDtos==null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }

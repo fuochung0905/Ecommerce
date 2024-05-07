@@ -47,13 +47,13 @@ public class AuthServiceImpl implements AuthService {
         user.setLastName(signUp.getLastName());
         user.setPassword(new BCryptPasswordEncoder().encode(signUp.getPassword()));
         user.setRole(Role.User);
+        user.setDelete(false);
         authRepository.save(user);
         UserDto userDto= new UserDto();
         userDto.setId(user.getId());
         userDto.setEmail(user.getEmail());
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
-
         return userDto;
     }
 

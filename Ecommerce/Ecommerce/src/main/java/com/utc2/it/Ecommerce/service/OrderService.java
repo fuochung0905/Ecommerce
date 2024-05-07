@@ -23,7 +23,7 @@ public interface OrderService {
     String ApprovalToTransport(OrderedRequest orderRequest);
     String TransportToDelivered(OrderedRequest orderRequest);
     Double getTotalAmountByUser(Long userId);
-
+    List<UserCartDto> historyOrderedByUser(Long userId);
 
 
 

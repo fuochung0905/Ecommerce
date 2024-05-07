@@ -84,4 +84,12 @@ public class AOrderController {
         Double totalAmount=orderService.getTotalAmountByUser(userId);
         return new ResponseEntity<>(totalAmount,HttpStatus.OK);
     }
+    @GetMapping("/historyOrderByUser/{userId}")
+    public ResponseEntity<?>historyOrderByUser(@PathVariable Long userId){
+        List<UserCartDto>userCartDtos=orderService.historyOrderedByUser((userId));
+        if(userCartDtos==null){
+            return ResponseEntity.noContent().build();
+        }
+        return new ResponseEntity<>(userCartDtos,HttpStatus.OK);
+    }
 }

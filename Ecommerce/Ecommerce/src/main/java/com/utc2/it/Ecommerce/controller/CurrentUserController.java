@@ -17,7 +17,6 @@ public class CurrentUserController {
     @GetMapping("/")
     public ResponseEntity<UserDto>getCurrentUser(){
         UserDto currentUser=authService.getCurrentUser();
-
         return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
 }

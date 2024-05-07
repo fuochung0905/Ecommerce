@@ -21,13 +21,16 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users) {
-            UserDto userDto = new UserDto();
-            userDto.setId(user.getId());
-            userDto.setFirstName(user.getFirstName());
-            userDto.setLastName(user.getLastName());
-            userDto.setEmail(user.getEmail());
-            userDto.setPhoneNumber(user.getPhoneNumber());
-            userDtos.add(userDto);
+           if(user.getRole().name().equals("User")){
+               UserDto userDto = new UserDto();
+               userDto.setId(user.getId());
+               userDto.setFirstName(user.getFirstName());
+               userDto.setLastName(user.getLastName());
+               userDto.setEmail(user.getEmail());
+               userDto.setPhoneNumber(user.getPhoneNumber());
+               userDto.setImage(user.getImage());
+               userDtos.add(userDto);
+           }
         }
         return userDtos;
     }
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
+        userDto.setImage(user.getImage());
         userDto.setPhoneNumber(user.getPhoneNumber());
         return userDto;
     }

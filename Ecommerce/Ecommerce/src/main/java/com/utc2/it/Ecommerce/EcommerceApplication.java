@@ -30,6 +30,7 @@ public class EcommerceApplication implements CommandLineRunner {
 			admin.setEmail("admin@gmail.com");
 			admin.setPassword(new BCryptPasswordEncoder().encode("admin"));
 			admin.setPhoneNumber("0399333643");
+			admin.setDelete(false);
 			admin.setRole(Role.Admin);
 			userRepository.save(admin);
 		}

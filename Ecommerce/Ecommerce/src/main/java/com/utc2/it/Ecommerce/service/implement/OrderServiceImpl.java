@@ -513,6 +513,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<UserCartDto> historyOrderedByUser(Long userId) {
+        User user=userRepository.findById(userId).orElseThrow();
+        List<UserCartDto>userOrderDtos= new ArrayList<>();
+     List<Order>historyOrder=orderRepository.findAllOrderByUserWithOrderAll(user);
+     for (Order order:historyOrder) {
+        for (OrderDetail orderDetail:order.getOrderDetails()) {
+            if(orderDetail!=null){
+                UserCartDto orderDto= new UserCartDto();
+                ProductItem productItem=productItemRepository.findById(orderDetail.getProductItem().getId()).orElseThrow();
+                Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
+                orderDto.setProductName(product.getProductName());
+                orderDto.setId(order.getId());
+                orderDto.setSize(orderDetail.getSize());
+                orderDto.setImage(productItem.getProductItemImage());
+                orderDto.setColor(orderDetail.getColor());
+                User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
+                orderDto.setUsername(orderUser.getUsername());
+                orderDto.setAddressUser(orderDetail.getAddressUser());
+                orderDto.setPrice(orderDetail.getPrice());
+                orderDto.setQuantity(orderDetail.getQuantity());
+                orderDto.setOrderStatus(order.getOrderStatus().toString());
+                orderDto.setOrderDate(order.getUpdateDate().toString());
+                userOrderDtos.add(orderDto);
+            }
+        }
+     }
+     return userOrderDtos;
+}
+
+    @Override
     public List<UserCartDto> historyOrderedByOrdered() {
         String username=getCurrentUsername();
         User user= getUser(username);

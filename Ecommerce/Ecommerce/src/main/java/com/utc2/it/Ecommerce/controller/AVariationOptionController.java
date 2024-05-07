@@ -25,7 +25,7 @@ public class AVariationOptionController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
     @GetMapping("/")
-    public ResponseEntity<List<VariationOptionDto>>getAllVariation(){
+    public ResponseEntity<List<VariationOptionDto>>getAllVariationOption(){
         List<VariationOptionDto>listDto=variationService.getAllVariation();
         if (listDto==null||listDto.size()==0){
             return ResponseEntity.noContent().build();
@@ -33,7 +33,7 @@ public class AVariationOptionController {
         return new ResponseEntity<>(listDto,HttpStatus.OK);
     }
     @GetMapping("/{variationOptionId}")
-    public ResponseEntity<VariationOptionDto>getVariationById(@PathVariable Long variationOptionId){
+    public ResponseEntity<VariationOptionDto>getVariationOptionById(@PathVariable Long variationOptionId){
         VariationOptionDto dto=variationService.getVariationById(variationOptionId);
         if(dto==null){
             return ResponseEntity.notFound().build();

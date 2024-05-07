@@ -67,12 +67,16 @@ public class VariationOptionServiceImpl implements VariationOptionService {
     }
     @Override
     public List<VariationOptionDto> getAllVariation() {
-        List<VariationOption>variations=variationOptionRepository.findAll();
+        List<VariationOption>variationsOption=variationOptionRepository.findAll();
         List<VariationOptionDto>variationDtos= new ArrayList<>();
-        for (VariationOption variation:variations) {
+        for (VariationOption variationOption:variationsOption) {
             VariationOptionDto dto= new VariationOptionDto();
-            dto.setId(variation.getId());
-            dto.setValue(variation.getValue());
+            dto.setId(variationOption.getId());
+            Variation variation=variationOption.getVariation();
+            Category category=variation.getCategory();
+            dto.setCategoryName(category.getCategoryName());
+            dto.setVariationName(variation.getName());
+            dto.setValue(variationOption.getValue());
             variationDtos.add(dto);
         }
         return variationDtos;

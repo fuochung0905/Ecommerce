@@ -115,6 +115,21 @@ public class VariationServiceImpl implements VariationService {
         return variationDtos;
     }
 
+    @Override
+    public List<VariationDto> getVariationCategory(Long categoryId) {
+        Category category=categoryRepository.findById(categoryId).orElseThrow();
+        List<Variation>variations=category.getVariations();
+        List<VariationDto>variationDtos= new ArrayList<>();
+        for (Variation variation:variations) {
+            VariationDto dto= new VariationDto();
+            dto.setId(variation.getId());
+            dto.setCategoryName(variation.getCategory().getCategoryName());
+            dto.setName(variation.getName());
+            dto.setCategoryId(variation.getCategory().getId());
+            variationDtos.add(dto);
+        }
+        return variationDtos;
+    }
 
 
 }
