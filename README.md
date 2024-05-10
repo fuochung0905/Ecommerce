@@ -1,3 +1,4 @@
+Chi tiết website: https://www.youtube.com/watch?v=6naq5xczsrM 
 The project uses Java language with springboot framework
 The project uses two databases: mysql and redis
 The project uses data structures, multi-threading,.... to handle concurrent access errors to the same API
