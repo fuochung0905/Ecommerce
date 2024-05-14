@@ -53,4 +53,14 @@ public class UReviewController {
         List<ReviewDto>getAllReviewByProduct=reviewService.getAllReviewsByProductId(productId);
         return new ResponseEntity<>(getAllReviewByProduct, HttpStatus.OK);
     }
+    @GetMapping("sumRating/product/{productId}")
+    public ResponseEntity<Double> getSumRatingReviewByProductId(@PathVariable Long productId) {
+        Double result=reviewService.sumRatingByProductId(productId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @GetMapping("countRating/product/{productId}")
+    public ResponseEntity<Integer> getCountReviewByProductId(@PathVariable Long productId) {
+        Integer result=reviewService.getReviewCountByProductId(productId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
 }

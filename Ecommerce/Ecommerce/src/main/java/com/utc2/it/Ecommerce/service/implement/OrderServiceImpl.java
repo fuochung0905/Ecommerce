@@ -29,8 +29,10 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
     private final CartDetailRepository cartDetailRepository;
+    private final ProductItemVariationOptionRepository productItemVariationOptionRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final VariationOptionRepository variationOptionRepository;
     private final ProductItemRepository productItemRepository;
     private final ExecutorService executorService=new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
 
@@ -38,9 +40,15 @@ public class OrderServiceImpl implements OrderService {
     public OrderRequest userOrder(OrderRequest request) {
         OrderRequest orderRequest= new OrderRequest();
         String username=getCurrentUsername();
+
         User user=getUser(username);
         Address address= addressRepository.getAddressByIsDefine(user,true);
         if(address !=null){
+            if(user.getPhoneNumber()==null){
+
+                orderRequest.setMessage("user not phoneNumber");
+                return orderRequest;
+            }
             CartDetail cartDetail=cartDetailRepository.findById(request.getCartid()).orElseThrow();
             ProductItem product =cartDetail.getProductItem();
             Order order= new Order();
@@ -50,9 +58,11 @@ public class OrderServiceImpl implements OrderService {
             order.setUpdateDate(LocalDateTime.now());
             order.setOrdered(true);
             Order saveOrder=orderRepository.save(order);
+            VariationOption variationOption=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
+            ProductItem productItem=productItemRepository.findById(cartDetail.getProductItem().getId()).orElseThrow();
+            ProductItemVariationOption productItemVariationOption=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(cartDetail.getProductItem(),variationOption);
             OrderDetail orderDetail= new OrderDetail();
             orderDetail.setOrder(order);
-
             orderDetail.setAddressUser(address.getStreet()+" "+address.getState()+" "+address.getCity()+" "+address.getCountry());
             orderDetail.setProductItem(product);
             orderDetail.setPrice(cartDetail.getPrice());
@@ -64,8 +74,13 @@ public class OrderServiceImpl implements OrderService {
             if(saveOrderDetail!=null){
                 Order tampOrder=orderRepository.findById(saveOrderDetail.getId()).orElseThrow();
                 tampOrder.setTotalPrice(saveOrderDetail.getPrice()* saveOrderDetail.getQuantity());
-                product.setQyt_stock(product.getQyt_stock()-cartDetail.getQuantity());
-                ProductItem saveProduct=productItemRepository.save(product);
+Product product1=productItem.getProduct();
+                productItemVariationOption.setQuantity(productItemVariationOption.getQuantity()-cartDetail.getQuantity());
+               productItemVariationOptionRepository.save(productItemVariationOption);
+                productItem.setQyt_stock(productItem.getQyt_stock()-saveOrderDetail.getQuantity());
+                productItemRepository.save(productItem);
+                product1.setQuantity(product1.getQuantity()-saveOrderDetail.getQuantity());
+                productRepository.save(product1);
                 cartDetailRepository.delete(cartDetail);
                 orderRequest.setMessage("Order Successfully");
                 return orderRequest;
@@ -420,7 +435,6 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setProductName(product.getProductName());
                     orderDto.setId(order.getId());
                     orderDto.setSize(orderDetail.getSize());
-
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setPrice(orderDetail.getPrice());

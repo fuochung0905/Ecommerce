@@ -2,6 +2,9 @@ package com.utc2.it.Ecommerce.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +27,15 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long Id;
+    @NotBlank(message = "Họ không được để trống")
     private String firstName;
+    @NotBlank(message = "Tên không được để trống")
     private String lastName;
+    @NotBlank(message = "Họ không được để trống")
+    @Email(message = "Cần đúng định dạng mail")
     private String email;
     private String password;
+
     private String phoneNumber;
     private String image;
     private boolean isDelete;

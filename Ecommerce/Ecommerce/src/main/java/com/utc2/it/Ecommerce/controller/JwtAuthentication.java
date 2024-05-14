@@ -2,6 +2,7 @@ package com.utc2.it.Ecommerce.controller;
 
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class JwtAuthentication {
     private final AuthService authService;
     private final ProductService productService;
     @PostMapping("/register")
-    public ResponseEntity<UserDto>register(@RequestBody SignUpRequest signUpRequest){
+    public ResponseEntity<UserDto>register( @Valid @RequestBody SignUpRequest signUpRequest){
         UserDto userDto= authService.CreateUser(signUpRequest);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }

@@ -3,6 +3,7 @@ package com.utc2.it.Ecommerce.controller;
 import com.utc2.it.Ecommerce.dto.DeleteResponse;
 import com.utc2.it.Ecommerce.dto.VariationDto;
 import com.utc2.it.Ecommerce.service.VariationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.List;
 public class AVariationController {
     private final VariationService variationService;
     @PostMapping("/createNewVariation")
-    public ResponseEntity<?>createNewVariation(@RequestBody VariationDto variationDto){
+    public ResponseEntity<?>createNewVariation(@Valid @RequestBody VariationDto variationDto){
         VariationDto dto=variationService.createNewVariation(variationDto);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }

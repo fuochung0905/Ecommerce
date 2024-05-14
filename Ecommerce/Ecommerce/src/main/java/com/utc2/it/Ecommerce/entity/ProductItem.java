@@ -1,6 +1,7 @@
 package com.utc2.it.Ecommerce.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -19,14 +20,17 @@ public class ProductItem {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    @Min(value = 0, message = "Số lượng không được âm")
     private int qyt_stock;
     private Long idColor;
     private String productItemImage;
+    @Min(value = 0, message = "Giá tiền không được âm")
     private double price;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
-    @OneToOne(mappedBy = "productItem")
-    private OrderDetail orderDetail;
+    @OneToMany(mappedBy = "productItem",cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetails= new ArrayList<>();
+
     @OneToMany(mappedBy = "productItem",cascade = CascadeType.ALL)
     private List<CartDetail> cartDetails= new ArrayList<>();
 

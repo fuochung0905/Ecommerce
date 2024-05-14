@@ -23,8 +23,8 @@ public class OrderDetail {
      @ManyToOne(fetch = FetchType.LAZY)
      @JoinColumn(name = "fk_order_id")
      private Order order;
-     @OneToOne(cascade = CascadeType.ALL)
-     @JoinColumn(name = "fk_productItem_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
      private ProductItem productItem;
 
 }

@@ -2,6 +2,7 @@ package com.utc2.it.Ecommerce.controller;
 
 import com.utc2.it.Ecommerce.dto.*;
 import com.utc2.it.Ecommerce.service.ProductItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class AProductItemController {
         }
     }
     @PostMapping("/createNewProductItem")
-    public ResponseEntity<?>createNewProductItem( ProductItemDto dto,@RequestParam("file") MultipartFile file)throws IOException {
+    public ResponseEntity<?>createNewProductItem( ProductItemDto dto, @RequestParam("file") MultipartFile file)throws IOException {
         Long productItemId= productItemService.createNewProductItem(dto);
         try {
             String fileName=saveImageToDirectory(file);

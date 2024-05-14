@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.List;
 public class UAddressController {
     private final AddressService addressService;
     @PostMapping("/createNewAddress")
-    public ResponseEntity<AddressDto>createAddress(@RequestBody AddressDto addressDto){
+    public ResponseEntity<AddressDto>createAddress(@Valid @RequestBody AddressDto addressDto){
         AddressDto dto=addressService.createAddress(addressDto);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }

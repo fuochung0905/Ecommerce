@@ -103,4 +103,18 @@ public class ReviewServiceImpl implements ReviewService {
        }
        return dtos;
     }
+
+    @Override
+    public Double sumRatingByProductId(Long productId) {
+        Product product=productRepository.findById(productId).orElseThrow();
+        Double result=reviewsRepository.sumRatingByProductId(product);
+        return result;
+    }
+
+    @Override
+    public Integer getReviewCountByProductId(Long productId) {
+        Product product=productRepository.findById(productId).orElseThrow();
+        Integer result=reviewsRepository.countRatingByProductId(product);
+        return result;
+    }
 }

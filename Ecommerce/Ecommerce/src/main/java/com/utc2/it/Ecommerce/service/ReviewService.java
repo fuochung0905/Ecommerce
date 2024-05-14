@@ -10,4 +10,6 @@ public interface ReviewService {
     void saveReviewImage(Long reviewId, String imageName);
     String deleteReview(Long reviewId);
     List<ReviewDto> getAllReviewsByProductId(Long productId);
+    Double sumRatingByProductId(Long productId);
+    Integer getReviewCountByProductId(Long productId);
 }

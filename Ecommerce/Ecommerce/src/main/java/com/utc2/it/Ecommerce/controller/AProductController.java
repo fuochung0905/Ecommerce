@@ -28,7 +28,7 @@ public class AProductController {
     private final ProductService productService;
     private static final String UPLOAD_DIR = "src/main/resources/images";
     @PostMapping("/createNewProduct")
-    public ResponseEntity<?>createProduct( ProductDto dto,@RequestParam("file")MultipartFile file) throws IOException {
+    public ResponseEntity<?>createProduct(@Valid ProductDto dto,@RequestParam("file")MultipartFile file) throws IOException {
 
         Long productId=productService.createProduct(dto);
         try {

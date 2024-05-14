@@ -54,12 +54,11 @@ public class ProductItemVariationOptionServiceImpl implements ProductItemVariati
         List<ProductItemVariationOption>productItemVariationOptions=productItemVariationOptionRepository.findAllByProductItemId(productItem);
         List<ProductItemVariationOptionDto>productItemVariationOptionDtos= new ArrayList<>();
         for(ProductItemVariationOption productItemVariationOption:productItemVariationOptions){
-
             ProductItemVariationOptionDto productItemVariationOptionDto= new ProductItemVariationOptionDto();
             productItemVariationOptionDto.setId(productItemVariationOption.getId());
             productItemVariationOptionDto.setProductItemId(productItem.getId());
             productItemVariationOptionDto.setIdColor(productItem.getIdColor());
-            productItemVariationOptionDto.setVariationOptionId(productItemVariationOption.getId());
+            productItemVariationOptionDto.setVariationOptionId(productItemVariationOption.getVariationOption().getId());
             VariationOption variationOption=variationOptionRepository.findById(productItemVariationOption.getVariationOption().getId()).orElseThrow();
             productItemVariationOptionDto.setValue(variationOption.getValue());
             productItemVariationOptionDto.setQuantity(productItemVariationOption.getQuantity());

@@ -38,10 +38,70 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     }
     @Override
     public void addToCart(ColorSizeDto productVariationDtos) {
+        if(productVariationDtos.getVariationOptionId()==0){
+            boolean check=false;
+            ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
+
+            VariationOption findByColor=variationOptionRepository.findById(productItem.getIdColor()).orElseThrow();
+            ShoppingCart newShoppingCart = new ShoppingCart();
+            String currentUsername = getCurrentUsername();
+            User user = getUser(currentUsername);
+            if (user == null) {
+                throw new NotFoundException("User not found");
+            }
+
+            ShoppingCart checkShoppingCart = getCart(user);
+            if (checkShoppingCart == null) {
+                newShoppingCart.setUser(user);
+                shoppingCartRepository.save(newShoppingCart);
+            }
+            else {
+                List<CartDetail>  cartDetails = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
+                if (cartDetails == null) {
+                    CartDetail newCart = new CartDetail();
+                    newCart.setQuantity(productVariationDtos.getQuantity());
+                    newCart.setIdColor(findByColor.getId());
+
+                    newCart.setProductItem(productItem);
+
+                    newCart.setColor(findByColor.getValue());
+                    double totalPrice = productItem.getPrice() * 1;
+                    newCart.setPrice(totalPrice);
+                    newCart.setShopping_cart(checkShoppingCart);
+                    CartDetail save = cartDetailRepository.save(newCart);
+                }
+                else {
+                    for(CartDetail cartDetail:cartDetails)
+                    {
+                        if(Objects.equals(cartDetail.getColor(), findByColor.getValue()) )
+                        {
+                            check=true;
+                            if (check) {
+                                cartDetail.setQuantity(cartDetail.getQuantity() + productVariationDtos.getQuantity());
+                                CartDetail save = cartDetailRepository.save(cartDetail);
+                            }
+                        }
+                    }
+                    if(!check){
+                        CartDetail newCart = new CartDetail();
+                        newCart.setQuantity(productVariationDtos.getQuantity());
+                        newCart.setIdColor(findByColor.getId());
+
+                        newCart.setProductItem(productItem);
+
+                        newCart.setColor(findByColor.getValue());
+                        double totalPrice = productItem.getPrice() * 1;
+                        newCart.setPrice(totalPrice);
+                        newCart.setShopping_cart(checkShoppingCart);
+                        CartDetail save = cartDetailRepository.save(newCart);
+                    }
+                }
+            }
+        }
         boolean check=false;
        ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         VariationOption findBySize=variationOptionRepository.findById(productVariationDtos.getVariationOptionId()).orElseThrow();
-        VariationOption findByColor=variationOptionRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
+        VariationOption findByColor=variationOptionRepository.findById(productItem.getIdColor()).orElseThrow();
         ShoppingCart newShoppingCart = new ShoppingCart();
         String currentUsername = getCurrentUsername();
         User user = getUser(currentUsername);
@@ -102,7 +162,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
     public void removeCart(ColorSizeDto productVariationDtos) {
         boolean check=false;
         ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
-        VariationOption findBySize=variationOptionRepository.findById(productVariationDtos.getVariationOptionId()).orElseThrow();
+        VariationOption findBySize=variationOptionRepository.findById(productItem.getIdColor()).orElseThrow();
         VariationOption findByColor=variationOptionRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
         ShoppingCart newShoppingCart = new ShoppingCart();
         String currentUsername = getCurrentUsername();
