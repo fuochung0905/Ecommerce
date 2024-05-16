@@ -19,12 +19,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/user/review")
+
 
 public class UReviewController {
     private final ReviewService reviewService;
     private static final String UPLOAD_DIR = "src/main/resources/images";
-    @PostMapping("/createNewReview")
+    @PostMapping("api/user/review/createNewReview")
     public ResponseEntity<String> createNewReview( ReviewDto dto,@RequestParam("file")MultipartFile file) {
         Long reviewDto= reviewService.createReview(dto);
         try {
@@ -48,17 +48,20 @@ public class UReviewController {
             return fileName;
         }
     }
-    @GetMapping("product/{productId}")
+    @GetMapping("api/guest/review/product/{productId}")
     public ResponseEntity<List<ReviewDto>> getReviewById(@PathVariable Long productId) {
         List<ReviewDto>getAllReviewByProduct=reviewService.getAllReviewsByProductId(productId);
+        if(getAllReviewByProduct==null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(getAllReviewByProduct);
+        }
         return new ResponseEntity<>(getAllReviewByProduct, HttpStatus.OK);
     }
-    @GetMapping("sumRating/product/{productId}")
+    @GetMapping("api/guest/review/sumRating/product/{productId}")
     public ResponseEntity<Double> getSumRatingReviewByProductId(@PathVariable Long productId) {
         Double result=reviewService.sumRatingByProductId(productId);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
-    @GetMapping("countRating/product/{productId}")
+    @GetMapping("api/guest/review/countRating/product/{productId}")
     public ResponseEntity<Integer> getCountReviewByProductId(@PathVariable Long productId) {
         Integer result=reviewService.getReviewCountByProductId(productId);
         return new ResponseEntity<>(result,HttpStatus.OK);

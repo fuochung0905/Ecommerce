@@ -15,7 +15,7 @@ import com.utc2.it.Ecommerce.service.VariationOptionService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user/variation")
+@RequestMapping("/api/guest/variation")
 @RequiredArgsConstructor
 public class UVariationController {
    private final VariationService variationService;

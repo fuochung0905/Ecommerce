@@ -11,7 +11,7 @@ import com.utc2.it.Ecommerce.service.ProductService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user/product")
+@RequestMapping("/api/guest/product")
 @RequiredArgsConstructor
 public class UProductController {
     private final ProductService productService;

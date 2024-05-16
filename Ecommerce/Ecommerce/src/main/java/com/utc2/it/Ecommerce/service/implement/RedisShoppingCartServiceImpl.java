@@ -41,7 +41,6 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
         if(productVariationDtos.getVariationOptionId()==0){
             boolean check=false;
             ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
-
             VariationOption findByColor=variationOptionRepository.findById(productItem.getIdColor()).orElseThrow();
             ShoppingCart newShoppingCart = new ShoppingCart();
             String currentUsername = getCurrentUsername();
@@ -61,9 +60,7 @@ public class RedisShoppingCartServiceImpl implements RedisShoppingCartService {
                     CartDetail newCart = new CartDetail();
                     newCart.setQuantity(productVariationDtos.getQuantity());
                     newCart.setIdColor(findByColor.getId());
-
                     newCart.setProductItem(productItem);
-
                     newCart.setColor(findByColor.getValue());
                     double totalPrice = productItem.getPrice() * 1;
                     newCart.setPrice(totalPrice);

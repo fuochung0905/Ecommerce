@@ -83,6 +83,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewDto> getAllReviewsByProductId(Long productId) {
        List<Review> reviews=reviewsRepository.findAllByProductId(productId);
+       if(reviews==null){
+           return null;
+       }
        List<ReviewDto> dtos=new ArrayList<>();
        for(Review review:reviews){
            Product product=productRepository.findById(review.getProduct().getId()).orElseThrow();

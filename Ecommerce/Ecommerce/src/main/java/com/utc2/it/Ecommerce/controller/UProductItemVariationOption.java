@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/user/product-item-variation-option")
+@RequestMapping("api/guest/product-item-variation-option")
 @RequiredArgsConstructor
 
 public class UProductItemVariationOption {
