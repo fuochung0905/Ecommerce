@@ -22,9 +22,9 @@ public class Category {
     private Long Id;
     @NotBlank(message = "Tên loại sản phẩm không được để trống")
     private String categoryName;
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category")
     private List<Product>products= new ArrayList<>();
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category")
     private List<Variation>variations= new LinkedList<>();
 
 }

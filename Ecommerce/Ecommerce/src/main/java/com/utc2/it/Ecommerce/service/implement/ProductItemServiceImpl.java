@@ -33,8 +33,7 @@ public class ProductItemServiceImpl implements ProductItemService {
         ProductItem productItem= new ProductItem();
         productItem.setProduct(product);
         productItem.setPrice(productItemDto.getPrice());
-
-        productItem.setQyt_stock(productItemDto.getQyt_stock());
+        productItem.setQyt_stock(0);
         productItem.setIdColor(productItemDto.getIdColor());
         ProductItem save= productItemRepository.save(productItem);
         return save.getId();
@@ -83,7 +82,7 @@ public class ProductItemServiceImpl implements ProductItemService {
         dto.setQuantity(productItem.getQyt_stock());
         dto.setPrice(productItem.getPrice());
         dto.setImage(productItem.getProductItemImage());
-        dto.setPrice(productItem.getPrice());
+
         return dto;
     }
 

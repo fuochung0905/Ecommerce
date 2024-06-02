@@ -20,7 +20,6 @@ public class ProductItem {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @Min(value = 0, message = "Số lượng không được âm")
     private int qyt_stock;
     private Long idColor;
     private String productItemImage;
@@ -28,10 +27,10 @@ public class ProductItem {
     private double price;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
-    @OneToMany(mappedBy = "productItem",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productItem")
     private List<OrderDetail> orderDetails= new ArrayList<>();
 
-    @OneToMany(mappedBy = "productItem",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productItem")
     private List<CartDetail> cartDetails= new ArrayList<>();
 
 

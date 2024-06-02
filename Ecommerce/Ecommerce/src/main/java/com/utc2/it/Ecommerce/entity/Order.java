@@ -25,7 +25,6 @@ public class Order {
     @Column(name = "order_Id")
     private Long Id;
     private double totalPrice;
-
     @NotNull
     private LocalDateTime createDate;
     @NotNull
@@ -43,7 +42,9 @@ public class Order {
     private OrderStatus orderStatus;
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails= new ArrayList<>();
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_payment_id")
+    private Payment payment;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_user_id")
     private User user;

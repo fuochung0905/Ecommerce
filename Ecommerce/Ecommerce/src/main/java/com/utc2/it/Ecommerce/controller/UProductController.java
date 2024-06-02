@@ -15,6 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UProductController {
     private final ProductService productService;
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductDto>>getAllProductBySearchLikeName(@RequestParam String productName){
+        List<ProductDto>productDtos=productService.getAllProductSearchLikeName(productName);
+        return new ResponseEntity<>(productDtos,HttpStatus.OK);
+    }
     @GetMapping("/")
     public ResponseEntity<List<ProductDto>> getAllProduct(){
         List<ProductDto>productDtos=productService.getAllProduct();

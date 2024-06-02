@@ -17,6 +17,7 @@ public class ReviewDto {
     private Integer rating;
     private String variation;
     private String date;
+    private boolean like;
     private Long productId;
     private Long userId;
     private String imageReview;

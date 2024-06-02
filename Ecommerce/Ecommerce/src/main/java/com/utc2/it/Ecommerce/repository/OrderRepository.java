@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import com.utc2.it.Ecommerce.entity.Order;
 import com.utc2.it.Ecommerce.entity.User;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -37,8 +39,12 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     List<Order> findAllOrderWithOrderDelivered(@Param("active")Boolean active);
     @Query("select o from Order o join fetch o.orderDetails od join fetch od.productItem where  o.isCancel=:active")
     List<Order> findAllOrderWithOrderCancel(@Param("active")Boolean active);
-
-
     @Query("select sum(o.totalPrice) from Order o where o.user=:user")
     Double getTotalAmount(@Param("user")User user);
+    @Query("select count (o) from  Order  o where o.isOrdered=:active")
+    Integer getCountApproval(@Param("active")boolean active);
+    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE DATE(o.createDate) = DATE(:currentDate) AND o.isDelivered = :active")
+    Double getTotalRevenueToday(@Param("currentDate") LocalDateTime currentDate, @Param("active") boolean active);
+    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE MONTH(o.createDate) = :month AND YEAR(o.createDate) = :year AND o.isDelivered = :active")
+    Double getTotalRevenueOfMonth(@Param("month") int month, @Param("year") int year, @Param("active") boolean active);
 }

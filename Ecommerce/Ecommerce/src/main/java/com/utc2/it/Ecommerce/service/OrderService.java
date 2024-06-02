@@ -25,6 +25,8 @@ public interface OrderService {
     Double getTotalAmountByUser(Long userId);
     List<UserCartDto> historyOrderedByUser(Long userId);
 
+    Integer countApproval();
+
 
 
 }

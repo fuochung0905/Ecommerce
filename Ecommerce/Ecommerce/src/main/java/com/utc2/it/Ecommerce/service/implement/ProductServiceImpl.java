@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
         Category category= categoryRepository.findById(productDto.getCategoryId()).orElseThrow(()->new ResourceNotFoundException("category","categoryId",productDto.getCategoryId()));
         product.setProductName(productDto.getProductName());
         product.setDescription(productDto.getDescription());
+        product.setShow(true);
         product.setCategory(category);
         product= productRepository.save(product);
         return product.getId();
@@ -38,18 +39,14 @@ public class ProductServiceImpl implements ProductService {
 
         Product product= productRepository.findById(productId).orElseThrow(()->
                 new ResourceNotFoundException("product","productId",productId));
-
         if(product!=null){
             product.setProductName(dto.getProductName());
             product.setDescription(dto.getDescription());
             Product saveProduct=productRepository.save(product);
             ProductDto productDto= new ProductDto();
-
             return getProductDto(productDto, saveProduct);
-
         }
         return null;
-
     }
 
     @Override
@@ -68,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
         ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
         Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
         ProductDto productDto = new ProductDto();
-        if(product!=null) {
+        if(product!=null && product.isShow()==true) {
             return getProductDto(productDto, product);
         }
         return null;
@@ -97,14 +94,17 @@ public class ProductServiceImpl implements ProductService {
         List<Product>products=productRepository.findAll();
         List<ProductDto>productDtos= new LinkedList();
         for (Product product:products) {
-            ProductDto dto= new ProductDto();
-            dto.setId(product.getId());
-            dto.setProductName(product.getProductName());
-            dto.setDescription(product.getDescription());
-            dto.setQuantity(product.getQuantity());
-            dto.setPrice(product.getPrice());
-            dto.setImage(product.getImageName());
-            productDtos.add(dto);
+            if( product.isShow()==true){
+                ProductDto dto= new ProductDto();
+                dto.setId(product.getId());
+                dto.setProductName(product.getProductName());
+                dto.setDescription(product.getDescription());
+                dto.setQuantity(product.getQuantity());
+                dto.setPrice(product.getPrice());
+                dto.setImage(product.getImageName());
+                productDtos.add(dto);
+            }
+
         }
         return productDtos;
     }
@@ -152,13 +152,14 @@ public class ProductServiceImpl implements ProductService {
         ProductDto productDto= new ProductDto();
         productDto.setId(productItem.getId());
         Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
-        productDto.setPrice(productItem.getPrice());
-        productDto.setProductName(product.getProductName());
-        productDto.setDescription(product.getDescription());
-        productDto.setCategoryId(product.getCategory().getId());
-
-        productDto.setQuantity(productItemVariationOption.getQuantity());
-        productDto.setImage(productItem.getProductItemImage());
+        if(product.isShow()==true){
+            productDto.setPrice(productItem.getPrice());
+            productDto.setProductName(product.getProductName());
+            productDto.setDescription(product.getDescription());
+            productDto.setCategoryId(product.getCategory().getId());
+            productDto.setQuantity(productItemVariationOption.getQuantity());
+            productDto.setImage(productItem.getProductItemImage());
+        }
         return productDto;
     }
 
@@ -168,16 +169,36 @@ public class ProductServiceImpl implements ProductService {
        List<Product>products=productRepository.findAllByCategory(category);
        List<ProductDto>productDtos=new LinkedList<>();
        for (Product product:products) {
-           ProductDto dto= new ProductDto();
-           dto.setId(product.getId());
-           dto.setProductName(product.getProductName());
-           dto.setDescription(product.getDescription());
-           dto.setQuantity(product.getQuantity());
-           dto.setPrice(product.getPrice());
-           dto.setImage(product.getImageName());
-           productDtos.add(dto);
-
+           if(product.isShow()==true){
+               ProductDto dto= new ProductDto();
+               dto.setId(product.getId());
+               dto.setProductName(product.getProductName());
+               dto.setDescription(product.getDescription());
+               dto.setQuantity(product.getQuantity());
+               dto.setPrice(product.getPrice());
+               dto.setImage(product.getImageName());
+               productDtos.add(dto);
+           }
        }
        return productDtos;
+    }
+
+    @Override
+    public List<ProductDto> getAllProductSearchLikeName(String productName) {
+        List<Product>products=productRepository.findAllBySearchLikeProductName(productName);
+        List<ProductDto>productDtos=new LinkedList<>();
+        for (Product product:products) {
+            if(product.isShow()==true){
+                ProductDto dto= new ProductDto();
+                dto.setId(product.getId());
+                dto.setProductName(product.getProductName());
+                dto.setDescription(product.getDescription());
+                dto.setQuantity(product.getQuantity());
+                dto.setPrice(product.getPrice());
+                dto.setImage(product.getImageName());
+                productDtos.add(dto);
+            }
+        }
+        return productDtos;
     }
 }

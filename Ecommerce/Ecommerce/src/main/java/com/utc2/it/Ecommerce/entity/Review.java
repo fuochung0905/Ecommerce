@@ -22,6 +22,7 @@ public class Review {
     private Long Id;
     private String variation;
     private Integer rating;
+//    private  boolean like;
     @Column(columnDefinition = "TEXT")
     private  String comment;
     private LocalDateTime date;

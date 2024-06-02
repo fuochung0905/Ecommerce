@@ -22,4 +22,5 @@ public interface ProductService {
     CurrentDetailProductDto getCurrentDetailProduct(Long productId);
     ProductDto getProductByIsColorAndByVariationOption(Long colorId,Long variationOptionId);
     List<ProductDto>getAllProductByCategory(Long categoryId);
+    List<ProductDto>getAllProductSearchLikeName(String productName);
 }

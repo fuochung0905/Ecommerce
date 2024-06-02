@@ -30,7 +30,7 @@ public class Product {
     @NotBlank(message = "Description is required")
     @Column(columnDefinition = "TEXT")
     private  String description;
-
+    private boolean isShow;
     private int quantity;
     private double price;
     private double rate;

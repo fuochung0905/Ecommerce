@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 
 public class OrderedRequest {
     private Long id;
+    private int cartId;
+    private int deliveryId;
 }

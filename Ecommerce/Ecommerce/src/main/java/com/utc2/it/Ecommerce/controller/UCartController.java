@@ -1,8 +1,11 @@
 package com.utc2.it.Ecommerce.controller;
 
 import com.utc2.it.Ecommerce.dto.ColorSizeDto;
+import com.utc2.it.Ecommerce.dto.DeleteResponse;
+import com.utc2.it.Ecommerce.dto.ExceptionCartDto;
 import com.utc2.it.Ecommerce.dto.UserCartDto;
 import com.utc2.it.Ecommerce.service.CartService;
+import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/cart")
 public class UCartController {
-    private final RedisShoppingCartService redisShoppingCartService;
+
     private final CartService cartService;
 
     @GetMapping("/count")
@@ -25,13 +28,13 @@ public class UCartController {
         return new ResponseEntity<>(cartCount,HttpStatus.OK);
     }
     @PostMapping("/add")
-    public ResponseEntity<String>createCart(@RequestBody ColorSizeDto productVariationDtos) throws Exception {
-        redisShoppingCartService.addToCart(productVariationDtos);
-        return new ResponseEntity<>("Add successfully", HttpStatus.CREATED);
+    public ResponseEntity<ExceptionCartDto>createCart(@RequestBody ColorSizeDto productVariationDtos) throws Exception {
+      ExceptionCartDto exceptionCartDto= cartService.addToCart(productVariationDtos);
+        return new ResponseEntity<>(exceptionCartDto, HttpStatus.CREATED);
     }
     @PostMapping("/remove")
     public ResponseEntity<String>removeCart(@RequestBody ColorSizeDto productVariationDtos) throws Exception {
-        redisShoppingCartService.removeCart(productVariationDtos);
+        cartService.removeCart(productVariationDtos);
         return new ResponseEntity<>("Remove successfully", HttpStatus.CREATED);
     }
     @GetMapping("/")
@@ -41,5 +44,10 @@ public class UCartController {
             return ResponseEntity.noContent().build();
         }
         return new ResponseEntity<>(userCartDtos,HttpStatus.OK);
+    }
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<DeleteResponse>deleteCartById(@PathVariable Long cartId){
+        cartService.deleteCartById(cartId);
+        return new ResponseEntity<>(new DeleteResponse("Xóa thành công"),HttpStatus.OK);
     }
 }

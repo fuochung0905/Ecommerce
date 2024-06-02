@@ -1,5 +1,7 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.entity.Product;
+import com.utc2.it.Ecommerce.repository.ProductRepository;
 import com.utc2.it.Ecommerce.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,26 +17,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public CategoryDto createCategory(CategoryDto dto) {
-        Category category= new Category();
+        Category category = new Category();
         category.setCategoryName(dto.getName());
         categoryRepository.save(category);
-        CategoryDto categoryDto= new CategoryDto();
+        CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getCategoryName());
         return categoryDto;
-        
+
     }
 
     @Override
     public CategoryDto updateCategory(Long categoryId, CategoryDto dto) {
-        Category category= categoryRepository.findById(categoryId).orElseThrow(
-                ()->new ResourceNotFoundException("category","categoryId",categoryId));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("category", "categoryId", categoryId));
         category.setCategoryName(dto.getName());
         categoryRepository.save(category);
-        CategoryDto categoryDto= new CategoryDto();
+        CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getCategoryName());
         return categoryDto;
@@ -42,9 +45,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long categoryId) {
-        Category category= categoryRepository.findById(categoryId).orElseThrow(
-                ()->new ResourceNotFoundException("category","categoryId",categoryId));
-        CategoryDto categoryDto= new CategoryDto();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("category", "categoryId", categoryId));
+
+        CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getCategoryName());
         return categoryDto;
@@ -52,27 +56,27 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long categoryId) {
-        Category category= categoryRepository.findById(categoryId).orElseThrow(
-                ()->new ResourceNotFoundException("category","categoryId",categoryId));
-        categoryRepository.delete(category);
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("category", "categoryId", categoryId));
+        categoryRepository.save(category);
+        List<Product>products=category.getProducts();
+        for(Product item :products){
+            item.setShow(false);
+            productRepository.save(item);
+        }
     }
 
     @Override
     public List<CategoryDto> getAllCategory() {
-      List<Category>categories=categoryRepository.findAll();
-      if(categories!=null){
-          List<CategoryDto>categoryDtos= new LinkedList<>();
-          for (Category category: categories) {
-              CategoryDto dto = new CategoryDto();
-              dto.setId(category.getId());
-              dto.setName(category.getCategoryName());
-              categoryDtos.add(dto);
-          }
-          return categoryDtos;
-      }
-      else {
-          return null;
-      }
-
+        List<Category> categories = categoryRepository.findAll();
+            List<CategoryDto> categoryDtos = new LinkedList<>();
+            for (Category category : categories) {
+                    CategoryDto dto = new CategoryDto();
+                    dto.setId(category.getId());
+                    dto.setName(category.getCategoryName());
+                    categoryDtos.add(dto);
+            }
+            return categoryDtos;
     }
 }
+

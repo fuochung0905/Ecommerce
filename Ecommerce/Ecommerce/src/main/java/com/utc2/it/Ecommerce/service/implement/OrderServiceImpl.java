@@ -4,6 +4,8 @@ import com.utc2.it.Ecommerce.dto.*;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.OrderService;
+import com.utc2.it.Ecommerce.service.VnPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,25 +36,41 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final VariationOptionRepository variationOptionRepository;
     private final ProductItemRepository productItemRepository;
-    private final ExecutorService executorService=new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS,new LinkedBlockingDeque<Runnable>());
+    private final PaymentRepository paymentRepository;
+    private final PaymentTypeRepository paymentTypeRepository;
 
+    @Transactional
     @Override
     public OrderRequest userOrder(OrderRequest request) {
         OrderRequest orderRequest= new OrderRequest();
         String username=getCurrentUsername();
-
         User user=getUser(username);
         Address address= addressRepository.getAddressByIsDefine(user,true);
         if(address !=null){
             if(user.getPhoneNumber()==null){
-
                 orderRequest.setMessage("user not phoneNumber");
                 return orderRequest;
             }
             CartDetail cartDetail=cartDetailRepository.findById(request.getCartid()).orElseThrow();
             ProductItem product =cartDetail.getProductItem();
+            VariationOption findIdSize=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
+            ProductItemVariationOption tamp=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(product,findIdSize);
+            if(tamp.getQuantity()<cartDetail.getQuantity()){
+                orderRequest.setMessage("not quantity");
+                return  orderRequest;
+            }
             Order order= new Order();
             order.setUser(user);
+
+            if(request.getPaymentId()!=0){
+                Payment payment= paymentRepository.findPaymentByName("Thanh toán khi nhận hàng");
+                order.setPayment(payment);
+            }
+            else {
+                PaymentType paymentType=paymentTypeRepository.findById(request.getPaymentTypeId()).orElseThrow();
+                Payment payment=paymentType.getPayment();
+                order.setPayment(payment);
+            }
             order.setOrderStatus(OrderStatus.ordered);
             order.setCreateDate(LocalDateTime.now());
             order.setUpdateDate(LocalDateTime.now());
@@ -74,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
             if(saveOrderDetail!=null){
                 Order tampOrder=orderRepository.findById(saveOrderDetail.getId()).orElseThrow();
                 tampOrder.setTotalPrice(saveOrderDetail.getPrice()* saveOrderDetail.getQuantity());
-Product product1=productItem.getProduct();
+                Product product1=productItem.getProduct();
                 productItemVariationOption.setQuantity(productItemVariationOption.getQuantity()-cartDetail.getQuantity());
                productItemVariationOptionRepository.save(productItemVariationOption);
                 productItem.setQyt_stock(productItem.getQyt_stock()-saveOrderDetail.getQuantity());
@@ -555,6 +573,12 @@ Product product1=productItem.getProduct();
      }
      return userOrderDtos;
 }
+
+    @Override
+    public Integer countApproval() {
+        Integer result=orderRepository.getCountApproval(true);
+        return result;
+    }
 
     @Override
     public List<UserCartDto> historyOrderedByOrdered() {

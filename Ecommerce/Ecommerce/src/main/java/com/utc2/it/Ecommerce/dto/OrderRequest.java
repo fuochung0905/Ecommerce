@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 public class OrderRequest {
     private Long cartid;
     private String message;
+    private Long paymentId;
+    private Long paymentTypeId;
+    private Long deliveryId;
 }

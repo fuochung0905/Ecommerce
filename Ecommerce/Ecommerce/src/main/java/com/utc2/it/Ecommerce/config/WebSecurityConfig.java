@@ -38,10 +38,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers("/api/v1/auth/**").permitAll();
                     auth.requestMatchers("/api/guest/**").permitAll();
                     auth.requestMatchers("/images/**").permitAll();
-//                    auth.requestMatchers("/v3/api-docs.yaml").permitAll();
-//                    auth.requestMatchers("/v3/api-docs/**").permitAll();
-//                    auth.requestMatchers("/swagger-ui/**").permitAll();
-//                    auth.requestMatchers("/swagger-ui.html").permitAll();
+                    auth.requestMatchers("/api/user/vn-pay/vnpay-payment").permitAll();
                     auth.requestMatchers("/api/admin/**").hasAuthority(Role.Admin.name());
                     auth.requestMatchers("/api/user/**").hasAuthority(Role.User.name());
                 auth.anyRequest().authenticated();

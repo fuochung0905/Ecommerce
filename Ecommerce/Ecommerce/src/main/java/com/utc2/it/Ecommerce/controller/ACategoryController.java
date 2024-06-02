@@ -43,9 +43,6 @@ public class ACategoryController {
     @GetMapping("/")
     public ResponseEntity<List<CategoryDto>>getAllCategories(){
         List<CategoryDto> categoryDtos= categoryService.getAllCategory();
-        if(categoryDtos==null){
-            return ResponseEntity.noContent().build();
-        }
         return new ResponseEntity<>(categoryDtos,HttpStatus.OK);
     }
 }

@@ -1,7 +1,9 @@
 package com.utc2.it.Ecommerce;
 
+import com.utc2.it.Ecommerce.entity.Payment;
 import com.utc2.it.Ecommerce.entity.Role;
 import com.utc2.it.Ecommerce.entity.User;
+import com.utc2.it.Ecommerce.repository.PaymentRepository;
 import com.utc2.it.Ecommerce.repository.UserRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @OpenAPIDefinition(info = @Info(title = "Employees API", version = "2.0", description = "Employees Information"))
 public class EcommerceApplication implements CommandLineRunner {
 	private final UserRepository userRepository;
+	private final PaymentRepository paymentRepository;
 	public static void main(String[] args) {
 		SpringApplication.run(EcommerceApplication.class, args);
 	}
@@ -34,6 +37,13 @@ public class EcommerceApplication implements CommandLineRunner {
 			admin.setRole(Role.Admin);
 			userRepository.save(admin);
 		}
+		Payment findPayment=paymentRepository.findPaymentByName("Thanh toán khi nhận hàng");
+		if(findPayment==null){
+			Payment payment=new Payment();
+			payment.setName("Thanh toán khi nhận hàng");
+			paymentRepository.save(payment);
+		}
+
 	}
 
 

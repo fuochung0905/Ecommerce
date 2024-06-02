@@ -3,6 +3,7 @@ package com.utc2.it.Ecommerce.controller;
 import com.utc2.it.Ecommerce.dto.OrderedRequest;
 import com.utc2.it.Ecommerce.dto.UserCartDto;
 import com.utc2.it.Ecommerce.service.OrderService;
+import com.utc2.it.Ecommerce.service.StatisticService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping("api/admin/order")
 public class AOrderController {
     private final OrderService orderService;
+    private final StatisticService statisticService;
     @GetMapping("/history")
     public ResponseEntity<List<UserCartDto>> getOrderHistory(){
         List<UserCartDto>result=orderService.AhistoryOrdered();
@@ -91,5 +93,19 @@ public class AOrderController {
             return ResponseEntity.noContent().build();
         }
         return new ResponseEntity<>(userCartDtos,HttpStatus.OK);
+    }
+    @GetMapping("/getCountOrdered")
+    public ResponseEntity<Integer>getCountOrdered(){
+        Integer result=orderService.countApproval();
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @GetMapping("/getTotalRevenueToday")
+    public ResponseEntity<Double>getTotalRevenueToday(){
+        Double result=statisticService.getTotalRevenueToday();
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+    @GetMapping("/total-revenue-of-month")
+    public Double getTotalRevenueOfMonth(@RequestParam int month, @RequestParam int year, @RequestParam boolean active) {
+        return statisticService.getTotalRevenueOfMonth(month, year, active);
     }
 }
