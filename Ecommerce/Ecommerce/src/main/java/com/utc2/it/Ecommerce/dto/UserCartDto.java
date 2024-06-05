@@ -14,6 +14,7 @@ public class UserCartDto {
     private int quantity;
     private double price;
     private String color;
+    private Long productItemId;
     private String size;
     private String productName;
     private String image;
@@ -21,4 +22,6 @@ public class UserCartDto {
     private String username;
     private String orderStatus;
     private String orderDate;
+        private String paymentStatus;
+    private Long paymentId;
 }

@@ -11,4 +11,7 @@ public class CartDetailDto {
     private Long id;
     private int quantity;
     private double price;
+    private String productName;
+    private String color;
+    private String size;
 }

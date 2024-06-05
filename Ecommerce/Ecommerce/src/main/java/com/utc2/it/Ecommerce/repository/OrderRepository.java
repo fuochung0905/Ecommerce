@@ -1,12 +1,14 @@
 package com.utc2.it.Ecommerce.repository;
 
+import com.utc2.it.Ecommerce.dto.TopCustomerDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.utc2.it.Ecommerce.entity.Order;
 import com.utc2.it.Ecommerce.entity.User;
-
+import com.utc2.it.Ecommerce.dto.TopCustomerDTO;
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,4 +49,5 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     Double getTotalRevenueToday(@Param("currentDate") LocalDateTime currentDate, @Param("active") boolean active);
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE MONTH(o.createDate) = :month AND YEAR(o.createDate) = :year AND o.isDelivered = :active")
     Double getTotalRevenueOfMonth(@Param("month") int month, @Param("year") int year, @Param("active") boolean active);
+
 }

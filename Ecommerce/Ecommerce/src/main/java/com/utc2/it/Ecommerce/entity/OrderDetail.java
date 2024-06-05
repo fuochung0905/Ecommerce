@@ -23,7 +23,6 @@ public class OrderDetail {
      @ManyToOne(fetch = FetchType.LAZY)
      @JoinColumn(name = "fk_order_id")
      private Order order;
-
     @ManyToOne(fetch = FetchType.LAZY)
      private ProductItem productItem;
 

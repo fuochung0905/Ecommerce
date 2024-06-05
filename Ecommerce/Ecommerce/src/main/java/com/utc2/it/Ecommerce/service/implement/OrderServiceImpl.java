@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
             OrderDetail saveOrderDetail=orderDetailRepository.save(orderDetail);
             if(saveOrderDetail!=null){
                 Order tampOrder=orderRepository.findById(saveOrderDetail.getId()).orElseThrow();
-                tampOrder.setTotalPrice(saveOrderDetail.getPrice()* saveOrderDetail.getQuantity());
+                tampOrder.setTotalPrice((saveOrderDetail.getPrice()* saveOrderDetail.getQuantity())+20000);
                 Product product1=productItem.getProduct();
                 productItemVariationOption.setQuantity(productItemVariationOption.getQuantity()-cartDetail.getQuantity());
                productItemVariationOptionRepository.save(productItemVariationOption);
@@ -127,6 +127,14 @@ public class OrderServiceImpl implements OrderService {
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setId(orderDetail.getId());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
@@ -163,6 +171,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
@@ -194,6 +210,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setId(orderDetail.getId());
@@ -229,6 +253,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setPrice(orderDetail.getPrice());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setQuantity(orderDetail.getQuantity());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
@@ -261,6 +293,14 @@ public class OrderServiceImpl implements OrderService {
                     Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
                     orderDto.setProductName(product.getProductName());
                     orderDto.setSize(orderDetail.getSize());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setId(orderDetail.getId());
@@ -288,6 +328,7 @@ public class OrderServiceImpl implements OrderService {
             addressDto.setCity(address.getCity());
             addressDto.setStreet(address.getStreet());
             addressDto.setCountry(address.getCountry());
+
             addressDto.setState(address.getState());
             addressDto.setUserId(address.getUser().getId());
             return addressDto;
@@ -313,6 +354,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setProductName(product.getProductName());
                     orderDto.setId(order.getId());
                     orderDto.setSize(orderDetail.getSize());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
@@ -351,7 +400,14 @@ public class OrderServiceImpl implements OrderService {
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
-
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setPrice(orderDetail.getPrice());
@@ -384,7 +440,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setId(order.getId());;
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
-
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
@@ -418,7 +481,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setProductName(product.getProductName());
                     orderDto.setId(order.getId());
                     orderDto.setSize(orderDetail.getSize());
-
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
@@ -457,6 +527,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
@@ -489,7 +567,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
-
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
@@ -562,6 +647,14 @@ public class OrderServiceImpl implements OrderService {
                 orderDto.setColor(orderDetail.getColor());
                 User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                 orderDto.setUsername(orderUser.getUsername());
+                Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                orderDto.setPaymentId(payment.getId());
+                if(payment.getId()!=1){
+                    orderDto.setPaymentStatus("Đã thanh toán");
+                }
+                else {
+                    orderDto.setPaymentStatus("Chưa thanh toán");
+                }
                 orderDto.setAddressUser(orderDetail.getAddressUser());
                 orderDto.setPrice(orderDetail.getPrice());
                 orderDto.setQuantity(orderDetail.getQuantity());
@@ -600,6 +693,14 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setSize(orderDetail.getSize());
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
+                    Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
+                    orderDto.setPaymentId(payment.getId());
+                    if(payment.getId()!=1){
+                        orderDto.setPaymentStatus("Đã thanh toán");
+                    }
+                    else {
+                        orderDto.setPaymentStatus("Chưa thanh toán");
+                    }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
                     orderDto.setUsername(orderUser.getUsername());
                     orderDto.setAddressUser(orderDetail.getAddressUser());

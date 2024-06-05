@@ -18,6 +18,9 @@ public class CartDetailServiceImpl implements CartDetailService {
         cartDetailDto.setId(cartDetail.getId());
         cartDetailDto.setQuantity(cartDetail.getQuantity());
         cartDetailDto.setPrice(cartDetail.getPrice());
+        cartDetailDto.setProductName(cartDetail.getProductItem().getProduct().getProductName());
+        cartDetailDto.setSize(cartDetail.getSize());
+        cartDetailDto.setColor(cartDetail.getColor());
         return cartDetailDto;
     }
 }

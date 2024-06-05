@@ -275,6 +275,7 @@ public class CartServiceImpl implements CartService {
                 ProductItem productItem=productItemRepository.findById(cart.getProductItem().getId()).orElseThrow();
                 Product product=productRepository.findById(productItem.getProduct().getId()).orElseThrow();
                 userCartDto.setProductName(product.getProductName());
+                userCartDto.setProductItemId(cart.getProductItem().getId());
                 userCartDto.setSize(cart.getSize());
                 userCartDto.setColor(cart.getColor());
                 userCartDto.setQuantity(cart.getQuantity());
