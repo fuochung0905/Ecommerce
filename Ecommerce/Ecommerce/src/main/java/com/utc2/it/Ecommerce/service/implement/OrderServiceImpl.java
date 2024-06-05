@@ -125,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setProductName(product.getProductName());
                     orderDto.setSize(orderDetail.getSize());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setId(orderDetail.getId());
                     Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
                     orderDto.setPaymentId(payment.getId());
@@ -170,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
                     orderDto.setPaymentId(payment.getId());
                     if(payment.getId()!=1){
@@ -219,7 +219,7 @@ public class OrderServiceImpl implements OrderService {
                         orderDto.setPaymentStatus("Chưa thanh toán");
                     }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setId(orderDetail.getId());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
@@ -263,7 +263,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     orderDto.setQuantity(orderDetail.getQuantity());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setId(orderDetail.getId());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setOrderStatus(order.getOrderStatus().toString());
@@ -305,7 +305,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setColor(orderDetail.getColor());
                     orderDto.setId(orderDetail.getId());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
@@ -365,7 +365,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
 
@@ -398,7 +398,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setId(order.getId());
                     orderDto.setSize(orderDetail.getSize());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
                     orderDto.setPaymentId(payment.getId());
@@ -450,7 +450,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
@@ -492,7 +492,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDto.setImage(productItem.getProductItemImage());
                     orderDto.setColor(orderDetail.getColor());
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
@@ -536,7 +536,7 @@ public class OrderServiceImpl implements OrderService {
                         orderDto.setPaymentStatus("Chưa thanh toán");
                     }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setOrderStatus(order.getOrderStatus().toString());
                     orderDto.setOrderDate(order.getUpdateDate().toString());
@@ -576,7 +576,7 @@ public class OrderServiceImpl implements OrderService {
                         orderDto.setPaymentStatus("Chưa thanh toán");
                     }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
@@ -646,7 +646,7 @@ public class OrderServiceImpl implements OrderService {
                 orderDto.setImage(productItem.getProductItemImage());
                 orderDto.setColor(orderDetail.getColor());
                 User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                orderDto.setUsername(orderUser.getUsername());
+                orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                 Payment payment=paymentRepository.findById(orderDetail.getOrder().getPayment().getId()).orElseThrow();
                 orderDto.setPaymentId(payment.getId());
                 if(payment.getId()!=1){
@@ -702,7 +702,7 @@ public class OrderServiceImpl implements OrderService {
                         orderDto.setPaymentStatus("Chưa thanh toán");
                     }
                     User orderUser=userRepository.findById(orderDetail.getOrder().getUser().getId()).orElseThrow();
-                    orderDto.setUsername(orderUser.getUsername());
+                    orderDto.setUsername(orderUser.getFirstName()+" "+orderUser.getLastName());
                     orderDto.setAddressUser(orderDetail.getAddressUser());
                     orderDto.setPrice(orderDetail.getPrice());
                     orderDto.setQuantity(orderDetail.getQuantity());
