@@ -20,11 +20,9 @@ public class UOrderController {
     @PostMapping("/createNewOrder")
     public ResponseEntity<OrderRequest>addOrder(@RequestBody OrderRequest request){
         OrderRequest result=orderService.userOrder(request);
-        if(result.getMessage()=="Order Successfully"){
-            return ResponseEntity.badRequest().body(result);
-        }
         return  new ResponseEntity<>(result, HttpStatus.CREATED);
     }
+
     @GetMapping("/history")
     public ResponseEntity<List<UserCartDto>>getOrderHistory(){
         List<UserCartDto>result=orderService.historyOrdered();

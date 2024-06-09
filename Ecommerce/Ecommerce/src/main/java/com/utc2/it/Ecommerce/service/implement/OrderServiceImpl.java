@@ -37,76 +37,156 @@ public class OrderServiceImpl implements OrderService {
     private final VariationOptionRepository variationOptionRepository;
     private final ProductItemRepository productItemRepository;
     private final PaymentRepository paymentRepository;
-    private final PaymentTypeRepository paymentTypeRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
+
 
     @Transactional
     @Override
     public OrderRequest userOrder(OrderRequest request) {
-        OrderRequest orderRequest= new OrderRequest();
-        String username=getCurrentUsername();
-        User user=getUser(username);
-        Address address= addressRepository.getAddressByIsDefine(user,true);
-        if(address !=null){
-            if(user.getPhoneNumber()==null){
-                orderRequest.setMessage("user not phoneNumber");
-                return orderRequest;
-            }
-            CartDetail cartDetail=cartDetailRepository.findById(request.getCartid()).orElseThrow();
-            ProductItem product =cartDetail.getProductItem();
-            VariationOption findIdSize=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
-            ProductItemVariationOption tamp=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(product,findIdSize);
-            if(tamp.getQuantity()<cartDetail.getQuantity()){
-                orderRequest.setMessage("not quantity");
-                return  orderRequest;
-            }
-            Order order= new Order();
-            order.setUser(user);
+        if(request.getCartid()==0){
+            OrderRequest orderRequest= new OrderRequest();
+            String username=getCurrentUsername();
+            User user=getUser(username);
+            Address address= addressRepository.getAddressByIsDefine(user,true);
+            if(address !=null) {
+                if (user.getPhoneNumber() == null) {
+                    orderRequest.setMessage("user not phoneNumber");
+                    return orderRequest;
+                }
+                Order order= new Order();
+                order.setUser(user);
 
-            if(request.getPaymentId()!=0){
-                Payment payment= paymentRepository.findPaymentByName("Thanh toán khi nhận hàng");
-                order.setPayment(payment);
-            }
-            else {
-                PaymentType paymentType=paymentTypeRepository.findById(request.getPaymentTypeId()).orElseThrow();
-                Payment payment=paymentType.getPayment();
-                order.setPayment(payment);
-            }
-            order.setOrderStatus(OrderStatus.ordered);
-            order.setCreateDate(LocalDateTime.now());
-            order.setUpdateDate(LocalDateTime.now());
-            order.setOrdered(true);
-            Order saveOrder=orderRepository.save(order);
-            VariationOption variationOption=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
-            ProductItem productItem=productItemRepository.findById(cartDetail.getProductItem().getId()).orElseThrow();
-            ProductItemVariationOption productItemVariationOption=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(cartDetail.getProductItem(),variationOption);
-            OrderDetail orderDetail= new OrderDetail();
-            orderDetail.setOrder(order);
-            orderDetail.setAddressUser(address.getStreet()+" "+address.getState()+" "+address.getCity()+" "+address.getCountry());
-            orderDetail.setProductItem(product);
-            orderDetail.setPrice(cartDetail.getPrice());
-            orderDetail.setColor(cartDetail.getColor());
-            orderDetail.setSize(cartDetail.getSize());
-            orderDetail.setQuantity(cartDetail.getQuantity());
-            orderDetail.setId(saveOrder.getId());
-            OrderDetail saveOrderDetail=orderDetailRepository.save(orderDetail);
-            if(saveOrderDetail!=null){
-                Order tampOrder=orderRepository.findById(saveOrderDetail.getId()).orElseThrow();
-                tampOrder.setTotalPrice((saveOrderDetail.getPrice()* saveOrderDetail.getQuantity())+20000);
-                Product product1=productItem.getProduct();
-                productItemVariationOption.setQuantity(productItemVariationOption.getQuantity()-cartDetail.getQuantity());
-               productItemVariationOptionRepository.save(productItemVariationOption);
-                productItem.setQyt_stock(productItem.getQyt_stock()-saveOrderDetail.getQuantity());
-                productItemRepository.save(productItem);
-                product1.setQuantity(product1.getQuantity()-saveOrderDetail.getQuantity());
-                productRepository.save(product1);
-                cartDetailRepository.delete(cartDetail);
+                if(request.getPaymentId()==1){
+                    Payment payment= paymentRepository.findPaymentByName("Thanh toán khi nhận hàng");
+                    order.setPayment(payment);
+                }
+                else {
+                    Payment payment=paymentRepository.findById(2L).orElseThrow();
+                    order.setPayment(payment);
+                }
+                order.setOrderStatus(OrderStatus.ordered);
+                order.setCreateDate(LocalDateTime.now());
+                order.setUpdateDate(LocalDateTime.now());
+                order.setOrdered(true);
+                Order saveOrder=orderRepository.save(order);
+                ShoppingCart shoppingCart=getCart(user);
+                List<CartDetail>cartDetails=shoppingCart.getCartDetails();
+                for(CartDetail cartDetail:cartDetails){
+                    ProductItem product =cartDetail.getProductItem();
+                    VariationOption findIdSize=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
+                    ProductItemVariationOption tamp=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(product,findIdSize);
+                    if(tamp.getQuantity()<cartDetail.getQuantity()){
+                        orderRequest.setMessage("not quantity");
+                        return  orderRequest;
+                    }
+                    VariationOption variationOption=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
+                    ProductItem productItem=productItemRepository.findById(cartDetail.getProductItem().getId()).orElseThrow();
+                    ProductItemVariationOption productItemVariationOption=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(cartDetail.getProductItem(),variationOption);
+                    OrderDetail orderDetail= new OrderDetail();
+                    orderDetail.setOrder(saveOrder);
+                    orderDetail.setAddressUser(address.getStreet()+" "+address.getState()+" "+address.getCity()+" "+address.getCountry());
+                    orderDetail.setProductItem(product);
+                    orderDetail.setPrice(cartDetail.getPrice());
+                    orderDetail.setColor(cartDetail.getColor());
+                    orderDetail.setSize(cartDetail.getSize());
+                    orderDetail.setQuantity(cartDetail.getQuantity());
+                    orderDetail.setId(saveOrder.getId());
+                    OrderDetail saveOrderDetail=orderDetailRepository.save(orderDetail);
+                    if(saveOrderDetail!=null) {
+                        Order tampOrder = orderRepository.findById(saveOrderDetail.getOrder().getId()).orElseThrow();
+                        tampOrder.setTotalPrice((saveOrderDetail.getPrice() * saveOrderDetail.getQuantity()));
+                        Product product1 = productItem.getProduct();
+                        productItemVariationOption.setQuantity(productItemVariationOption.getQuantity() - cartDetail.getQuantity());
+                        productItemVariationOptionRepository.save(productItemVariationOption);
+                        productItem.setQyt_stock(productItem.getQyt_stock() - saveOrderDetail.getQuantity());
+                        productItemRepository.save(productItem);
+                        product1.setQuantity(product1.getQuantity() - saveOrderDetail.getQuantity());
+                        productRepository.save(product1);
+                        cartDetailRepository.delete(cartDetail);
+                    }
+                }
+                saveOrder.setTotalPrice(saveOrder.getTotalPrice()+20000);
+                orderRepository.save(saveOrder);
                 orderRequest.setMessage("Order Successfully");
                 return orderRequest;
             }
+            orderRequest.setMessage("user not address");
+            return orderRequest;
         }
-        orderRequest.setMessage("user not address");
-        return orderRequest;
+        else {
+            OrderRequest orderRequest= new OrderRequest();
+            String username=getCurrentUsername();
+            User user=getUser(username);
+            Address address= addressRepository.getAddressByIsDefine(user,true);
+            if(address !=null){
+                if(user.getPhoneNumber()==null){
+                    orderRequest.setMessage("user not phoneNumber");
+                    return orderRequest;
+                }
+                CartDetail cartDetail=cartDetailRepository.findById(request.getCartid()).orElseThrow();
+                ProductItem product =cartDetail.getProductItem();
+                VariationOption findIdSize=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
+                ProductItemVariationOption tamp=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(product,findIdSize);
+                if(tamp.getQuantity()<cartDetail.getQuantity()){
+                    orderRequest.setMessage("not quantity");
+                    return  orderRequest;
+                }
+                Order order= new Order();
+                order.setUser(user);
+
+                if(request.getPaymentId()==1){
+                    Payment payment= paymentRepository.findPaymentByName("Thanh toán khi nhận hàng");
+                    order.setPayment(payment);
+                }
+                else {
+                    Payment payment=paymentRepository.findById(2L).orElseThrow();
+                    order.setPayment(payment);
+                }
+                order.setOrderStatus(OrderStatus.ordered);
+                order.setCreateDate(LocalDateTime.now());
+                order.setUpdateDate(LocalDateTime.now());
+                order.setOrdered(true);
+                Order saveOrder=orderRepository.save(order);
+                VariationOption variationOption=variationOptionRepository.findById(cartDetail.getIdSize()).orElseThrow();
+                ProductItem productItem=productItemRepository.findById(cartDetail.getProductItem().getId()).orElseThrow();
+                ProductItemVariationOption productItemVariationOption=productItemVariationOptionRepository.findProductItemVariationOptionByProductItemAndVariationOption(cartDetail.getProductItem(),variationOption);
+                OrderDetail orderDetail= new OrderDetail();
+                orderDetail.setOrder(order);
+                orderDetail.setAddressUser(address.getStreet()+" "+address.getState()+" "+address.getCity()+" "+address.getCountry());
+                orderDetail.setProductItem(product);
+                orderDetail.setPrice(cartDetail.getPrice());
+                orderDetail.setColor(cartDetail.getColor());
+                orderDetail.setSize(cartDetail.getSize());
+                orderDetail.setQuantity(cartDetail.getQuantity());
+                orderDetail.setId(saveOrder.getId());
+                OrderDetail saveOrderDetail=orderDetailRepository.save(orderDetail);
+                if(saveOrderDetail!=null){
+                    Order tampOrder=orderRepository.findById(saveOrderDetail.getId()).orElseThrow();
+                    tampOrder.setTotalPrice((saveOrderDetail.getPrice()* saveOrderDetail.getQuantity())+20000);
+                    Product product1=productItem.getProduct();
+                    productItemVariationOption.setQuantity(productItemVariationOption.getQuantity()-cartDetail.getQuantity());
+                    productItemVariationOptionRepository.save(productItemVariationOption);
+                    productItem.setQyt_stock(productItem.getQyt_stock()-saveOrderDetail.getQuantity());
+                    productItemRepository.save(productItem);
+                    product1.setQuantity(product1.getQuantity()-saveOrderDetail.getQuantity());
+                    productRepository.save(product1);
+                    cartDetailRepository.delete(cartDetail);
+                    orderRequest.setMessage("Order Successfully");
+                    return orderRequest;
+                }
+            }
+            orderRequest.setMessage("user not address");
+            return orderRequest;
+        }
+
     }
+
+
+    private ShoppingCart getCart(User user){
+        ShoppingCart shoppingCart=shoppingCartRepository.findShoppingCartByUser(user);
+        return shoppingCart;
+    }
+
     @Override
     public List<UserCartDto> historyOrderApproved() {
         String username=getCurrentUsername();
