@@ -22,7 +22,13 @@ public class AVariationOptionController {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         VariationOptionDto dto= variationService.createVariationDto(variationDto);
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        if(dto==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Giá trị đã tồn tại");
+        }
+        else {
+            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        }
+
     }
     @GetMapping("/")
     public ResponseEntity<List<VariationOptionDto>>getAllVariationOption(){

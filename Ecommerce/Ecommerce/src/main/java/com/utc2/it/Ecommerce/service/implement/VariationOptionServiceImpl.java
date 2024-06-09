@@ -23,14 +23,18 @@ public class VariationOptionServiceImpl implements VariationOptionService {
         VariationOptionDto variationDto= new VariationOptionDto();
         VariationOption variationOption= new VariationOption();
         Variation variation= variationRepository.findById(dto.getVariationId()).orElseThrow();
-        variationOption.setId(dto.getId());
-        variationOption.setValue(dto.getValue());
-        variationOption.setVariation(variation);
-       VariationOption save=variationOptionRepository.save(variationOption);
-        variationDto.setId(save.getId());
-        variationDto.setValue(save.getValue());
-        variationDto.setVariationId(save.getVariation().getId());
-        return  variationDto;
+        VariationOption find=variationOptionRepository.findVariationOptionByValueAndVariation(dto.getValue(),variation);
+        if(find==null){
+            variationOption.setId(dto.getId());
+            variationOption.setValue(dto.getValue());
+            variationOption.setVariation(variation);
+            VariationOption save=variationOptionRepository.save(variationOption);
+            variationDto.setId(save.getId());
+            variationDto.setValue(save.getValue());
+            variationDto.setVariationId(save.getVariation().getId());
+            return  variationDto;
+        }
+    return null;
     }
 
     @Override

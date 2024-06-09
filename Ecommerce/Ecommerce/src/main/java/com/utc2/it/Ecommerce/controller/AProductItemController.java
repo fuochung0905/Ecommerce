@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/admin/productItem")
+    @RequestMapping("api/admin/productItem")
 public class AProductItemController {
     private final ProductItemService productItemService;
 
@@ -51,7 +51,7 @@ public class AProductItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not upload image: " + ex.getMessage());
         }
     }
-    @PutMapping("/updateProductItem/{productItemId}")
+    @PutMapping("/v/{productItemId}")
     public ResponseEntity<?>updateProductItem(@PathVariable Long productItemId,@RequestBody ProductItemDto dto) throws IOException {
         ProductItemDto productItemDto=productItemService.updateProductItem(productItemId,dto);
         return new ResponseEntity<>(productItemDto,HttpStatus.OK);

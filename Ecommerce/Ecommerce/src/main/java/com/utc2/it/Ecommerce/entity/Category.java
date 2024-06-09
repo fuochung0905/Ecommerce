@@ -26,5 +26,6 @@ public class Category {
     private List<Product>products= new ArrayList<>();
     @OneToMany(mappedBy = "category")
     private List<Variation>variations= new LinkedList<>();
+    private boolean isShow;
 
 }

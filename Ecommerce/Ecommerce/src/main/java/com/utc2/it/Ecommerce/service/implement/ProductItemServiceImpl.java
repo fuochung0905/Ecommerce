@@ -24,6 +24,7 @@ public class ProductItemServiceImpl implements ProductItemService {
     public Long createNewProductItem(ProductItemDto productItemDto) throws IOException {
         Product product=productRepository.findById(productItemDto.getProductId()).orElseThrow();
         product.setPrice(productItemDto.getPrice());
+
         List<ProductItem>productItemList=product.getProductItems();
         for(ProductItem productItem:productItemList){
             if(productItem.getIdColor()==productItemDto.getIdColor()){
@@ -34,6 +35,7 @@ public class ProductItemServiceImpl implements ProductItemService {
         productItem.setProduct(product);
         productItem.setPrice(productItemDto.getPrice());
         productItem.setQyt_stock(0);
+        productItem.setShow(true);
         productItem.setIdColor(productItemDto.getIdColor());
         ProductItem save= productItemRepository.save(productItem);
         return save.getId();
@@ -72,18 +74,22 @@ public class ProductItemServiceImpl implements ProductItemService {
     @Override
     public ProductDto getProductItemById(Long productItemId) {
         ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
-        Product product=productItem.getProduct();
-        if(productItem==null){
-            return null;
-        }
-        ProductDto dto= new ProductDto();
-        dto.setId(productItem.getId());
-        dto.setProductName(product.getProductName());
-        dto.setQuantity(productItem.getQyt_stock());
-        dto.setPrice(productItem.getPrice());
-        dto.setImage(productItem.getProductItemImage());
+        if(productItem.isShow()){
+            Product product=productItem.getProduct();
+            if(productItem==null){
+                return null;
+            }
+            ProductDto dto= new ProductDto();
+            dto.setId(productItem.getId());
+            dto.setProductName(product.getProductName());
+            dto.setQuantity(productItem.getQyt_stock());
+            dto.setPrice(productItem.getPrice());
+            dto.setImage(productItem.getProductItemImage());
 
-        return dto;
+            return dto;
+        }
+        return null;
+
     }
 
     @Override
@@ -94,7 +100,8 @@ public class ProductItemServiceImpl implements ProductItemService {
     @Override
     public void deleteProductItemById(Long productItemId) {
         ProductItem deleteProductItem= productItemRepository.findById(productItemId).orElseThrow();
-        productItemRepository.delete(deleteProductItem);
+        deleteProductItem.setShow(false);
+        productItemRepository.save(deleteProductItem);
 
     }
 
@@ -107,14 +114,17 @@ public class ProductItemServiceImpl implements ProductItemService {
         }
         List<ProductItemDto>productItemDtos=new ArrayList<>();
         for (ProductItem productItem:productItems) {
-            ProductItemDto productItemDto= new ProductItemDto();
-            productItemDto.setId(productItem.getId());
-            productItemDto.setIdColor(productItem.getIdColor());
-            productItemDto.setPrice(productItem.getPrice());
-            productItemDto.setQyt_stock(productItem.getQyt_stock());
-            productItemDto.setImage(productItem.getProductItemImage());
-            productItemDto.setProductId(productItem.getProduct().getId());
-            productItemDtos.add(productItemDto);
+            if(productItem.isShow()){
+                ProductItemDto productItemDto= new ProductItemDto();
+                productItemDto.setId(productItem.getId());
+                productItemDto.setIdColor(productItem.getIdColor());
+                productItemDto.setPrice(productItem.getPrice());
+                productItemDto.setQyt_stock(productItem.getQyt_stock());
+                productItemDto.setImage(productItem.getProductItemImage());
+                productItemDto.setProductId(productItem.getProduct().getId());
+                productItemDtos.add(productItemDto);
+            }
+
         }
         return productItemDtos;
     }
@@ -127,14 +137,17 @@ public class ProductItemServiceImpl implements ProductItemService {
             return null;
         }
         for (ProductItem item:productItems) {
-            ProductItemDto dto= new ProductItemDto();
-            dto.setProductId(item.getId());
-            dto.setProductId(item.getProduct().getId());
-            dto.setIdColor(item.getIdColor());
-            dto.setImage(item.getProductItemImage());
-            dto.setQyt_stock(item.getQyt_stock());
-            dto.setPrice(item.getPrice());
-            productItemDtos.add(dto);
+            if(item.isShow()){
+                ProductItemDto dto= new ProductItemDto();
+                dto.setProductId(item.getId());
+                dto.setProductId(item.getProduct().getId());
+                dto.setIdColor(item.getIdColor());
+                dto.setImage(item.getProductItemImage());
+                dto.setQyt_stock(item.getQyt_stock());
+                dto.setPrice(item.getPrice());
+                productItemDtos.add(dto);
+            }
+
         }
         return productItemDtos;
     }

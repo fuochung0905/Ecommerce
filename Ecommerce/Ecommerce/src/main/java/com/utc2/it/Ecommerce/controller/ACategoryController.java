@@ -23,7 +23,13 @@ public class ACategoryController {
             return ResponseEntity.badRequest().body("Invalid request");
         }
         CategoryDto categoryDto= categoryService.createCategory(dto);
-        return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
+        if (categoryDto==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Loại sản phẩm đã tồn tại");
+        }
+        else {
+            return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
+        }
+
     }
     @PutMapping("updateCategory/{categoryId}")
     public ResponseEntity<CategoryDto>updateCategory(@RequestBody CategoryDto dto,@PathVariable Long categoryId){

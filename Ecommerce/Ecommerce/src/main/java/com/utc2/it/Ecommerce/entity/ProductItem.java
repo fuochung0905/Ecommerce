@@ -25,6 +25,7 @@ public class ProductItem {
     private String productItemImage;
     @Min(value = 0, message = "Giá tiền không được âm")
     private double price;
+    private boolean isShow;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
     @OneToMany(mappedBy = "productItem")

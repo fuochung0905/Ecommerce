@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryDto {
     private Long Id;
-    private String name;
+        private String name;
     private boolean isShow;
 }

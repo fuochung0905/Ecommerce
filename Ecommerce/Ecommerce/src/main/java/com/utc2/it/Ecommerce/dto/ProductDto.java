@@ -16,8 +16,4 @@ public class ProductDto {
     private String image;
     private int quantity;
     private double price;
-
-
-
-
 }

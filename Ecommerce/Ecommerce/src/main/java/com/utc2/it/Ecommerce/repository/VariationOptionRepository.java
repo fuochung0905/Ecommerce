@@ -18,6 +18,8 @@ public interface VariationOptionRepository extends JpaRepository<VariationOption
     @Query("select vo from VariationOption  vo where vo.variation=:variation")
     List<VariationOption>getAllVariationByVariation(@Param("variation")Variation variation);
 
+    @Query("select vo from VariationOption vo where vo.value=:value and vo.variation=:variation")
+    VariationOption findVariationOptionByValueAndVariation(@Param("value")String value,@Param("variation")Variation variation);
     @Query("SELECT pivo.variationOption FROM ProductItemVariationOption pivo WHERE pivo.productItem = :productItem")
     List<VariationOption> findVariationOptionsByProductItem(@Param("productItem") ProductItem productItem);
 }
