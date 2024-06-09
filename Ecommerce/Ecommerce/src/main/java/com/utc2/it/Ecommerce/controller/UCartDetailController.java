@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/user/cartDetail")
@@ -19,5 +21,13 @@ public class UCartDetailController {
     public ResponseEntity<CartDetailDto>getCartDetailById(@PathVariable Long cartId){
         CartDetailDto cartDetailDto=cartDetailService.getCartDetailById(cartId);
         return new ResponseEntity<>(cartDetailDto, HttpStatus.OK);
+    }
+    @GetMapping("/")
+    public ResponseEntity<?>getAllCartDetail(){
+        List<CartDetailDto>cartDetailDtos=cartDetailService.getAllCartDetail();
+        if(cartDetailDtos==null){
+            return ResponseEntity.noContent().build();
+        }
+        return new ResponseEntity<>(cartDetailDtos,HttpStatus.CREATED);
     }
 }

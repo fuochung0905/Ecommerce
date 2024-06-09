@@ -70,7 +70,7 @@ public class CartServiceImpl implements CartService {
                 shoppingCartRepository.save(newShoppingCart);
                 exceptionCartDto.setMessage("Đã tạo giỏ hàng");
             }
-            else {
+          
                 List<CartDetail>  cartDetails = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
                 if (cartDetails == null) {
                     CartDetail newCart = new CartDetail();
@@ -112,7 +112,7 @@ public class CartServiceImpl implements CartService {
                         exceptionCartDto.setMessage("Thêm thành công");
                     }
                 }
-            }
+
         }
         boolean check=false;
         ProductItem productItem=productItemRepository.findById(productVariationDtos.getIdColor()).orElseThrow();
@@ -135,7 +135,7 @@ public class CartServiceImpl implements CartService {
             shoppingCartRepository.save(newShoppingCart);
             exceptionCartDto.setMessage("Đã tạo giỏ hàng");
         }
-        else {
+
             List<CartDetail>  cartDetails = cartDetailRepository.findCartDetailByShopping_cartAndProduct(checkShoppingCart, productItem);
             if (cartDetails == null) {
                 CartDetail newCart = new CartDetail();
@@ -179,7 +179,7 @@ public class CartServiceImpl implements CartService {
                     exceptionCartDto.setMessage("Thêm thành công");
                 }
             }
-        }
+
         return exceptionCartDto;
     }
 
