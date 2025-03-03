@@ -1,5 +1,7 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
+import com.utc2.it.Ecommerce.dto.LoginDto;
 import com.utc2.it.Ecommerce.entity.Product;
 import com.utc2.it.Ecommerce.exception.NotFoundException;
 import com.utc2.it.Ecommerce.service.AuthService;
@@ -78,24 +80,57 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void signin(SignInRequest request, HttpServletResponse httpServletResponse) throws IOException, JSONException {
-        UserDetails userDetails=userDetailService.userDetailsService().loadUserByUsername(request.getEmail());
-        Optional<User> optionalUser=userRepository.findByEmail(userDetails.getUsername());
-        User user=userRepository.findUserByEmail(userDetails.getUsername());
-        String jwt=jwtUtils.generateToken(userDetails);
-        List<Token>validTokenIsByUser=tokenRepository.findAllTokenByUser(user.getId());
-        if(!validTokenIsByUser.isEmpty()){
-            validTokenIsByUser.forEach(t->t.setLogout(true));
-        }
-        tokenRepository.saveAll(validTokenIsByUser);
-        saveToken(user, jwt);
-        if(optionalUser.isPresent()){
+        UserDetails userDetails = userDetailService.userDetailsService().loadUserByUsername(request.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(userDetails.getUsername());
+        User user = userRepository.findUserByEmail(userDetails.getUsername());
+
+        if (user == null) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             httpServletResponse.getWriter().write(new JSONObject()
-                    .put("userId",optionalUser.get().getId())
-                    .put("role",optionalUser.get().getRole())
-                    .put("token",jwt)
-                    .toString()
-            );
-            httpServletResponse.setHeader(HEADER,TOKEN+jwt);
+                    .put("success", false)
+                    .put("message", "Tài khoản hoặc mật khẩu không đúng")
+                    .toString());
+            return;  // Kết thúc phương thức, tránh trả về response thứ hai
+        }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        boolean isMatch = encoder.matches(request.getPassword(), user.getPassword());
+
+        if (!isMatch) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            httpServletResponse.getWriter().write(new JSONObject()
+                    .put("success", false)
+                    .put("message", "Tài khoản hoặc mật khẩu không đúng")
+                    .toString());
+            return;  // Kết thúc phương thức, tránh lỗi getWriter()
+        }
+
+        String jwt = jwtUtils.generateToken(userDetails);
+        List<Token> validTokensByUser = tokenRepository.findAllTokenByUser(user.getId());
+
+        if (!validTokensByUser.isEmpty()) {
+            validTokensByUser.forEach(t -> t.setLogout(true));
+            tokenRepository.saveAll(validTokensByUser);
+        }
+
+        saveToken(user, jwt);
+
+        if (optionalUser.isPresent()) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+            httpServletResponse.setHeader(HEADER, TOKEN + jwt);
+            httpServletResponse.getWriter().write(new JSONObject()
+                    .put("success", true)
+                    .put("message", "Login Success")
+                    .put("userId", optionalUser.get().getId())
+                    .put("role", optionalUser.get().getRole())
+                    .put("token", jwt)
+                    .toString());
+        } else {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            httpServletResponse.getWriter().write(new JSONObject()
+                    .put("success", false)
+                    .put("message", "Invalid username or password")
+                    .toString());
         }
     }
 

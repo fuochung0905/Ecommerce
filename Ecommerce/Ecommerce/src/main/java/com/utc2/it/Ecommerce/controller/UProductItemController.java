@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
 import com.utc2.it.Ecommerce.dto.ProductDto;
 import com.utc2.it.Ecommerce.dto.ProductItemDto;
 import com.utc2.it.Ecommerce.service.ProductItemService;
@@ -19,8 +20,8 @@ public class UProductItemController {
     private final ProductItemService productItemService;
     @GetMapping("/product/{productId}")
     public ResponseEntity<?> getProductItem(@PathVariable Long productId) {
-        List<ProductItemDto>productItemDtos=productItemService.getAllProductItemByProduct(productId);
-        if(productItemDtos.size()==0||productItemDtos==null){
+        BaseDto<List<ProductItemDto>>productItemDtos=productItemService.getAllProductItemByProduct(productId);
+        if(productItemDtos.getData().size()==0||productItemDtos==null){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(productItemDtos);

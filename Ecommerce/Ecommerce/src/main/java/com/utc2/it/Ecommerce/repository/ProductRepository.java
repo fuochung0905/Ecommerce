@@ -14,4 +14,15 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Product> findAllByCategory(Category category);
     @Query("select  p from Product p where p.productName LIKE %:productName% ")
     List<Product>findAllBySearchLikeProductName(@Param("productName") String productName);
+
+    @Query("select p from Product p where p.Id = :productId and p.deleted = FALSE ")
+    Product findByProductIdNoDelete(Long productId);
+
+
+    @Query("select p from Product p where p.productName =: productName and p.deleted = FALSE ")
+    Product findByProductNameNoDelete(@Param("productName")String productName);
+
+    @Query("select p from Product p where  p.deleted = FALSE ")
+    List<Product> findByProductAllNoDelete();
+
 }

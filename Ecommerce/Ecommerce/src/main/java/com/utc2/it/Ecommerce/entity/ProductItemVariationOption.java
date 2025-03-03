@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.entity;
 
+import com.utc2.it.Ecommerce.Base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class ProductItemVariationOption {
+public class ProductItemVariationOption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

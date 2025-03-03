@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin/product")
@@ -29,18 +31,11 @@ public class AProductController {
     private static final String UPLOAD_DIR = "src/main/resources/images";
     @PostMapping("/createNewProduct")
     public ResponseEntity<?>createProduct(@Valid ProductDto dto,@RequestParam("file")MultipartFile file) throws IOException {
-
-        Long productId=productService.createProduct(dto);
-        try {
-            String fileName=saveImageToDirectory(file);
-            productService.saveProductImage(productId,fileName);
-            return new ResponseEntity<>("Add product successfully", HttpStatus.CREATED);
-        }catch (IOException ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not upload image: " + ex.getMessage());
-        }
+       BaseDto<ProductDto> productDtoBaseDto = productService.addProduct(dto,file);
+        return new ResponseEntity<>(productDtoBaseDto, HttpStatus.CREATED);
     }
     private String saveImageToDirectory(MultipartFile file)throws IOException{
-        String fileName= StringUtils.cleanPath(file.getOriginalFilename());
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         Path uploadPath = Paths.get(UPLOAD_DIR);
         if(!Files.exists(uploadPath)){
             Files.createDirectories(uploadPath);
@@ -52,44 +47,38 @@ public class AProductController {
         }
     }
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDto>getProductById(@PathVariable Long productId){
-        ProductDto productDto= productService.getProductById(productId);
-        if(productDto==null){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?>getProductById(@PathVariable Long productId){
+        BaseDto<ProductDto> productDto= productService.getProductById(productId);
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
     @PostMapping("/updateProduct/{productId}")
-    public ResponseEntity<ProductDto>updateProduct(@RequestBody ProductDto dto,@PathVariable Long productId) throws IOException {
-        ProductDto productDto=productService.updateProduct(productId,dto);
+    public ResponseEntity<?>updateProduct(@RequestBody ProductDto dto,@PathVariable Long productId) throws IOException {
+        BaseDto<ProductDto> productDto=productService.updateProduct(productId,dto);
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
     @DeleteMapping("/{productId}")
-    public ResponseEntity<DeleteResponse>deleteProduct(@PathVariable Long productId){
-        productService.deleteProductById(productId);
-        return new ResponseEntity<>(new DeleteResponse("Product is delete successfully"),HttpStatus.OK);
+    public ResponseEntity<?>deleteProduct(@PathVariable Long productId){
+        BaseDto<DeleteResponse> responseBaseDto = productService.deleteProductById(productId);
+        return new ResponseEntity<>(responseBaseDto,HttpStatus.OK);
     }
     @GetMapping("/")
-    public ResponseEntity<List<ProductDto>>getAllProduct(){
-        List<ProductDto>productDtos=productService.getAllProduct();
-        if(productDtos==null){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?>getAllProduct(){
+        BaseDto<List<ProductDto>> productDtos=productService.getAllProduct();
         return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }
     @PutMapping("/addVariation")
-    public ResponseEntity<ProductDto>addVariationToProduct(@RequestBody ProductItemVariationDto productVariationDto){
-        ProductDto dto=productService.addVariationForProduct(productVariationDto);
+    public ResponseEntity<?>addVariationToProduct(@RequestBody ProductItemVariationDto productVariationDto){
+        BaseDto<ProductDto> dto=productService.addVariationForProduct(productVariationDto);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
     @PutMapping("/removeVariation")
-    public ResponseEntity<ProductDto>removeVariationToProduct(@RequestBody ProductItemVariationDto productVariationDto){
-        ProductDto dto=productService.removeVariationForProduct(productVariationDto);
+    public ResponseEntity<?>removeVariationToProduct(@RequestBody ProductItemVariationDto productVariationDto){
+        BaseDto<ProductDto> dto=productService.removeVariationForProduct(productVariationDto);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
     @GetMapping("/productItem/{productItemId}")
     public ResponseEntity<?>getProductByProductItem(@PathVariable Long productItemId){
-        ProductDto productDto=productService.getProductByProductItemId(productItemId);
+        BaseDto<ProductDto> productDto=productService.getProductByProductItemId(productItemId);
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
 }

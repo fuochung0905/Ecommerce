@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.entity;
 
+import com.utc2.it.Ecommerce.Base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Review {
+public class Review extends BaseEntity {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;

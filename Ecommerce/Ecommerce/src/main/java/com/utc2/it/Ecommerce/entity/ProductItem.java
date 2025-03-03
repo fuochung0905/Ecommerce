@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.entity;
 
+import com.utc2.it.Ecommerce.Base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductItem {
+public class ProductItem extends BaseEntity {
     @Column(name = "productItem_id")
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,6 @@ public class ProductItem {
     private String productItemImage;
     @Min(value = 0, message = "Giá tiền không được âm")
     private double price;
-    private boolean isShow;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
     @OneToMany(mappedBy = "productItem")

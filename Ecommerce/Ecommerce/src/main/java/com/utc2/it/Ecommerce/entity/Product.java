@@ -1,4 +1,5 @@
 package com.utc2.it.Ecommerce.entity;
+import com.utc2.it.Ecommerce.Base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,16 +22,14 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "product")
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-
     private String productName;
     @NotBlank(message = "Description is required")
     @Column(columnDefinition = "TEXT")
     private  String description;
-    private boolean isShow;
     private int quantity;
     private double price;
     private double rate;

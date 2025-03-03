@@ -50,7 +50,7 @@ public class ProductItemVariationOptionServiceImpl implements ProductItemVariati
 
     @Override
     public List<ProductItemVariationOptionDto> getAllProductItemVariationOptionsByProductItem(Long productItemId) {
-        ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
+        ProductItem productItem=productItemRepository.findByProductIdNoDelete(productItemId);
         List<ProductItemVariationOption>productItemVariationOptions=productItemVariationOptionRepository.findAllByProductItemId(productItem);
         List<ProductItemVariationOptionDto>productItemVariationOptionDtos= new ArrayList<>();
         for(ProductItemVariationOption productItemVariationOption:productItemVariationOptions){
@@ -63,8 +63,9 @@ public class ProductItemVariationOptionServiceImpl implements ProductItemVariati
             productItemVariationOptionDto.setValue(variationOption.getValue());
             productItemVariationOptionDto.setQuantity(productItemVariationOption.getQuantity());
             productItemVariationOptionDtos.add(productItemVariationOptionDto);
+            productItemVariationOptionDto.setProductId(productItem.getId());
         }
+
         return productItemVariationOptionDtos;
     }
-
 }

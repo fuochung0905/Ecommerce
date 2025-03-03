@@ -15,6 +15,14 @@ public interface ProductItemRepository extends JpaRepository<ProductItem,Long> {
     @Query("select pi from ProductItem  pi where pi.idColor=:colorId and pi.Id=:productItemId" )
     ProductItem findByColorId(@Param("colorId") Long colorId ,@Param("productItemId")Long productItemId);
 
-    @Query("select pi from ProductItem pi where pi.product=:product")
-    List<ProductItem>getAllProductItemByProduct(@Param("product") Product product);
+    @Query("select pi from ProductItem pi where pi.product=:product and pi.deleted = FALSE")
+    List<ProductItem>getAllProductItemByProductNoDelete(@Param("product") Product product);
+
+    @Query("select pi from ProductItem pi where pi.Id=:productId and pi.deleted = FALSE ")
+    ProductItem findByProductIdNoDelete(Long productId);
+
+    @Query("select pi from ProductItem pi where pi.deleted = FALSE ")
+    List<ProductItem> findByProductAllNoDelete();
+
+
 }

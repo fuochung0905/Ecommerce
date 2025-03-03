@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
 import com.utc2.it.Ecommerce.dto.*;
 import com.utc2.it.Ecommerce.service.ProductItemService;
 import jakarta.validation.Valid;
@@ -27,29 +28,11 @@ import java.util.stream.Collectors;
 public class AProductItemController {
     private final ProductItemService productItemService;
 
-    private static final String UPLOAD_DIR = "src/main/resources/images";
-    private String saveImageToDirectory(MultipartFile file)throws IOException{
-        String fileName= StringUtils.cleanPath(file.getOriginalFilename());
-        Path uploadPath = Paths.get(UPLOAD_DIR);
-        if(!Files.exists(uploadPath)){
-            Files.createDirectories(uploadPath);
-        }
-        try (InputStream inputStream=file.getInputStream()) {
-            Path filePath=uploadPath.resolve(fileName);
-            Files.copy(inputStream,filePath, StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
-        }
-    }
     @PostMapping("/createNewProductItem")
     public ResponseEntity<?>createNewProductItem( ProductItemDto dto, @RequestParam("file") MultipartFile file)throws IOException {
-        Long productItemId= productItemService.createNewProductItem(dto);
-        try {
-            String fileName=saveImageToDirectory(file);
-            productItemService.saveProductItemImage(productItemId,fileName);
-            return new ResponseEntity<>("Add product successfully", HttpStatus.CREATED);
-        }catch (IOException ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not upload image: " + ex.getMessage());
-        }
+
+        BaseDto<ProductItemDto> productDtoBaseDto = productItemService.addProductItem(dto,file);
+        return new ResponseEntity<>(productDtoBaseDto, HttpStatus.CREATED);
     }
     @PutMapping("/v/{productItemId}")
     public ResponseEntity<?>updateProductItem(@PathVariable Long productItemId,@RequestBody ProductItemDto dto) throws IOException {
@@ -67,8 +50,8 @@ public class AProductItemController {
         return new ResponseEntity<>(productItemDto,HttpStatus.OK);
     }
     @GetMapping("/product/{productId}")
-    public ResponseEntity<List<ProductItemDto>>getAllProductItemByProduct(@PathVariable Long productId){
-        List<ProductItemDto>productItemDtos=productItemService.getAllProductItemByProduct(productId);
+    public ResponseEntity<?>getAllProductItemByProduct(@PathVariable Long productId){
+        BaseDto<List<ProductItemDto>> productItemDtos=productItemService.getAllProductItemByProduct(productId);
         return new ResponseEntity<>(productItemDtos,HttpStatus.OK);
     }
     @GetMapping("/")

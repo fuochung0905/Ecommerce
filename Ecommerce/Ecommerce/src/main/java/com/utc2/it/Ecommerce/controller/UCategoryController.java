@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.controller;
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
 import com.utc2.it.Ecommerce.dto.CategoryDto;
 import com.utc2.it.Ecommerce.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,7 @@ public class UCategoryController {
     private final CategoryService categoryService;
     @GetMapping("/")
     public ResponseEntity<?> getCategory() {
-        List<CategoryDto>categoryDtos=categoryService.getAllCategory();
-        if(categoryDtos==null || categoryDtos.size()==0){
-            return ResponseEntity.noContent().build();
-        }
+        BaseDto<List<CategoryDto>> categoryDtos=categoryService.getAllCategory();
         return ResponseEntity.ok(categoryDtos);
     }
 }

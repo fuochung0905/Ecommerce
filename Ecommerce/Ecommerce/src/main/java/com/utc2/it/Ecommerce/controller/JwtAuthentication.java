@@ -1,6 +1,7 @@
 package com.utc2.it.Ecommerce.controller;
 
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +39,13 @@ public class JwtAuthentication {
         authService.signin(request,httpServletResponse);
     }
     @GetMapping("/")
-    public ResponseEntity<List<ProductDto>> getAllProduct(){
-        List<ProductDto>productDtos=productService.getAllProduct();
+    public ResponseEntity<?> getAllProduct(){
+        BaseDto<List<ProductDto>> productDtos=productService.getAllProduct();
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDto>getProductById(@PathVariable Long productId){
-        ProductDto productDto= productService.getProductById(productId);
+    public ResponseEntity<?>getProductById(@PathVariable Long productId){
+        BaseDto<ProductDto> productDto= productService.getProductById(productId);
         return new ResponseEntity<>(productDto,HttpStatus.OK);
     }
 

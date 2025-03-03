@@ -14,5 +14,6 @@ public class ProductItemVariationOptionDto {
     private Long variationOptionId;
     private String value;
     private int quantity;
+    private Long productId;
     private Long id;
 }

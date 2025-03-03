@@ -1,5 +1,6 @@
 package com.utc2.it.Ecommerce.service.implement;
 
+import com.utc2.it.Ecommerce.Base.BaseDto;
 import com.utc2.it.Ecommerce.dto.*;
 import com.utc2.it.Ecommerce.entity.*;
 import com.utc2.it.Ecommerce.exception.NotFoundException;
@@ -8,7 +9,14 @@ import com.utc2.it.Ecommerce.repository.*;
 import com.utc2.it.Ecommerce.service.ProductItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 
@@ -20,6 +28,65 @@ public class ProductItemServiceImpl implements ProductItemService {
     private final VariationOptionRepository variationOptionRepository;
     private final VariationRepository variationRepository;
     private final ProductItemVariationOptionRepository productItemVariationOptionRepository;
+    private static final String UPLOAD_DIR = "src/main/resources/images";
+    @Override
+    public BaseDto<ProductItemDto> addProductItem(ProductItemDto productItemDto, MultipartFile file) throws IOException {
+        BaseDto<ProductItemDto> response= new BaseDto<ProductItemDto>();
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if(!Files.exists(uploadPath)){
+            Files.createDirectories(uploadPath);
+        }
+        try (InputStream inputStream=file.getInputStream()) {
+            Path filePath=uploadPath.resolve(fileName);
+            Files.copy(inputStream,filePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (IOException e){
+            response.setMessage("Thêm ảnh thất bại");
+            response.setSuccess(false);
+            return response;
+        }
+        ProductItemDto dataResponse = new ProductItemDto();
+        Product product=productRepository.findByProductIdNoDelete(productItemDto.getProductId());
+        if(product==null){
+            response.setMessage("Product not found");
+            response.setSuccess(false);
+            return response;
+        }
+        product.setPrice(productItemDto.getPrice());
+        if(productItemDto.getIdColor() == 0L){
+
+            response.setData(dataResponse);
+            response.setMessage("Hiện tại chưa có màu sắc để thêm vào sản phẩm");
+            response.setSuccess(false);
+            return response;
+        }
+        List<ProductItem>productItemList=product.getProductItems();
+        for(ProductItem productItem:productItemList){
+            if(productItem.getIdColor()==productItemDto.getIdColor() && productItem.isDeleted() == false){
+                response.setMessage("Product item already exists");
+                response.setSuccess(false);
+                return response;
+            }
+        }
+        ProductItem productItem= new ProductItem();
+        productItem.setProduct(product);
+        productItem.setPrice(productItemDto.getPrice());
+        productItem.setQyt_stock(0);
+        productItem.setProductItemImage(fileName);
+        productItem.setIdColor(productItemDto.getIdColor());
+        ProductItem save= productItemRepository.save(productItem);
+
+        dataResponse.setProductId(productItem.getId());
+        dataResponse.setPrice(productItem.getPrice());
+        dataResponse.setQyt_stock(productItem.getQyt_stock());
+        dataResponse.setImage(fileName);
+        response.setSuccess(true);
+        response.setData(dataResponse);
+        response.setMessage("Product Item create successfully");
+        return response;
+    }
+
     @Override
     public Long createNewProductItem(ProductItemDto productItemDto) throws IOException {
         Product product=productRepository.findById(productItemDto.getProductId()).orElseThrow();
@@ -35,7 +102,6 @@ public class ProductItemServiceImpl implements ProductItemService {
         productItem.setProduct(product);
         productItem.setPrice(productItemDto.getPrice());
         productItem.setQyt_stock(0);
-        productItem.setShow(true);
         productItem.setIdColor(productItemDto.getIdColor());
         ProductItem save= productItemRepository.save(productItem);
         return save.getId();
@@ -74,21 +140,19 @@ public class ProductItemServiceImpl implements ProductItemService {
     @Override
     public ProductDto getProductItemById(Long productItemId) {
         ProductItem productItem=productItemRepository.findById(productItemId).orElseThrow();
-        if(productItem.isShow()){
             Product product=productItem.getProduct();
             if(productItem==null){
                 return null;
             }
             ProductDto dto= new ProductDto();
             dto.setId(productItem.getId());
+            dto.setDescription(product.getDescription());
             dto.setProductName(product.getProductName());
             dto.setQuantity(productItem.getQyt_stock());
             dto.setPrice(productItem.getPrice());
             dto.setImage(productItem.getProductItemImage());
-
             return dto;
-        }
-        return null;
+
 
     }
 
@@ -100,21 +164,27 @@ public class ProductItemServiceImpl implements ProductItemService {
     @Override
     public void deleteProductItemById(Long productItemId) {
         ProductItem deleteProductItem= productItemRepository.findById(productItemId).orElseThrow();
-        deleteProductItem.setShow(false);
+        deleteProductItem.setDeleted(true);
         productItemRepository.save(deleteProductItem);
-
     }
 
     @Override
-    public List<ProductItemDto> getAllProductItemByProduct(Long productId) {
-        Product product=productRepository.findById(productId).orElseThrow();
-        List<ProductItem> productItems=productItemRepository.getAllProductItemByProduct(product);
+    public BaseDto<List<ProductItemDto>>  getAllProductItemByProduct(Long productId) {
+        BaseDto<List<ProductItemDto>> response= new BaseDto<List<ProductItemDto>> ();
+        Product product=productRepository.findByProductIdNoDelete(productId);
+        if(product==null){
+            response.setMessage("Product not found");
+            response.setSuccess(false);
+            return response;
+        }
+        List<ProductItem> productItems=productItemRepository.getAllProductItemByProductNoDelete(product);
         if(productItems==null){
-            return null;
+            response.setMessage("Product Item empty in product");
+            response.setSuccess(true);
+            return response;
         }
         List<ProductItemDto>productItemDtos=new ArrayList<>();
         for (ProductItem productItem:productItems) {
-            if(productItem.isShow()){
                 ProductItemDto productItemDto= new ProductItemDto();
                 productItemDto.setId(productItem.getId());
                 productItemDto.setIdColor(productItem.getIdColor());
@@ -123,21 +193,21 @@ public class ProductItemServiceImpl implements ProductItemService {
                 productItemDto.setImage(productItem.getProductItemImage());
                 productItemDto.setProductId(productItem.getProduct().getId());
                 productItemDtos.add(productItemDto);
-            }
-
         }
-        return productItemDtos;
+        response.setSuccess(true);
+        response.setData(productItemDtos);
+        response.setMessage("Product Item get list successfully");
+        return response;
     }
 
     @Override
     public List<ProductItemDto> getAllProductItem() {
-        List<ProductItem>productItems= productItemRepository.findAll();
+        List<ProductItem>productItems= productItemRepository.findByProductAllNoDelete();
         List<ProductItemDto>productItemDtos= new LinkedList<>();
         if(productItems==null){
             return null;
         }
         for (ProductItem item:productItems) {
-            if(item.isShow()){
                 ProductItemDto dto= new ProductItemDto();
                 dto.setProductId(item.getId());
                 dto.setProductId(item.getProduct().getId());
@@ -146,8 +216,6 @@ public class ProductItemServiceImpl implements ProductItemService {
                 dto.setQyt_stock(item.getQyt_stock());
                 dto.setPrice(item.getPrice());
                 productItemDtos.add(dto);
-            }
-
         }
         return productItemDtos;
     }
@@ -160,16 +228,6 @@ public class ProductItemServiceImpl implements ProductItemService {
 
     @Override
     public ProductItem getProductItemByProductAndVarationOption(List<ColorSizeDto> productVariationDtos) {
-
-//        List<VariationOption>variationOptions= new LinkedList<>();
-//        Product product= new Product();
-//        for(ProductVariationDto productVariationDto:productVariationDtos){
-//            product=productRepository.findById(productVariationDto.getProductId()).orElseThrow();
-//            VariationOption variationOption= new VariationOption();
-//            variationOption=variationOptionRepository.findById(productVariationDto.getVariationOptionId()).orElseThrow();
-//            variationOptions.add(variationOption);
-//        }
-//        return productItemRepository.getProductItemByProductAndVariations(variationOptions,product);
         ProductItem productItem = new ProductItem();
         return productItem;
     }
